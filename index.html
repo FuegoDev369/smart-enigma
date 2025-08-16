@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Enigma — FuegoDev</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">🛡️SMART ENIGMA🛡 </h1>
+    <div class="controls">
+      <label class="sr-only" for="langSelect">Langue</label>
+      <select id="langSelect" aria-label="Choisir la langue">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+
+      <label class="theme-switch" title="Toggle theme">
+        <input id="themeToggle" type="checkbox" aria-label="Activer le mode sombre">
+        <span>🌓</span>
+      </label>
+    </div>
+  </header>
+
+  <main class="container" id="app">
+    <section class="key-block" aria-labelledby="keyLabel">
+      <label id="keyLabel" for="keyInput"></label>
+      <div class="key-row">
+        <input id="keyInput" type="password" autocomplete="new-password" inputmode="text" placeholder="" />
+        <button id="copyKey" class="btn small" aria-label="Copier la clé">📋</button>
+      </div>
+      <div class="options">
+        <label>
+          <input id="useStrong" type="checkbox" />
+          <span id="strongLabel">Max-Enigma</span>
+        </label>
+        <button id="clearKey" class="btn tiny" title="Effacer la clé">✖</button>
+      </div>
+    </section>
+
+    <section class="io-block">
+      <label class="sr-only" for="inputArea" id="inputLabel">Message</label>
+      <textarea id="inputArea" rows="8" placeholder=""></textarea>
+
+      <div class="actions" role="toolbar" aria-label="Actions">
+        <button id="encryptBtn" class="btn primary"></button>
+        <button id="decryptBtn" class="btn"></button>
+        <button id="clearBtn" class="btn outline"></button>
+      </div>
+
+      <h3 id="resultTitle"></h3>
+      <pre id="output" tabindex="0" aria-live="polite" style="color: gray"></pre>
+      <div class="output-actions">
+        <button id="copyOutput" class="btn"></button>
+        <button id="backToTop" class="btn tiny" title="Haut">↑</button>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="about" class="info">
+      <h4 id="aboutTitle"></h4>
+      <p id="aboutContent"></p>
+    </section>
+
+    <section id="how" class="info">
+      <h4 id="howTitle"></h4>
+      <ol id="howSteps"></ol>
+      <p id="howNote"></p>
+    </section>
+
+    <footer class="footer">
+      <small>By <strong>@FuegoDev (ARISTIDE)</strong></small>
+    </footer>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite" class="toast" hidden></div>
+
+  <script>
+    /* app.js — Smart Enigma (optimized)
+ - Responsive, accessible controls
+ - Keeps original substitution method for compatibility
+ - Adds AES-GCM strong encryption (Web Crypto)
+ - Avoids inline handlers; caches DOM lookups; clears key vars after use
+*/
+
+(() => {
+  'use strict';
+
+  /* -------- DOM cache -------- */
+  const $ = sel => document.querySelector(sel);
+  const langSelect = $('#langSelect');
+  const themeToggle = $('#themeToggle');
+  const keyInput = $('#keyInput');
+  const copyKeyBtn = $('#copyKey');
+  const clearKeyBtn = $('#clearKey');
+  const useStrong = $('#useStrong');
+  const inputArea = $('#inputArea');
+  const encryptBtn = $('#encryptBtn');
+  const decryptBtn = $('#decryptBtn');
+  const clearBtn = $('#clearBtn');
+  const output = $('#output');
+  const resultTitle = $('#resultTitle');
+  const copyOutput = $('#copyOutput');
+  const backToTop = $('#backToTop');
+  const toast = $('#toast');
+  const strongLabel = $('#strongLabel');
+
+  /* -------- Translations -------- */
+  const translations = {
+    fr: {
+      labelKey: "Clé secrète 🔐",
+      copyKey: "Copier Clé",
+      inputPlaceholder: "Saisissez le message à crypter ici 📝...",
+      buttonEncrypt: "CRYPTER 🙈",
+      buttonDecrypt: "DÉCRYPTER 🧐",
+      buttonClear: "EFFACER",
+      resultTitle: "RÉSULTAT 🤫👇",
+      outputPlaceholder: "Le résultat apparaîtra ici...",
+      copyResult: "Copier",
+      aboutTitle: "À propos de SMART ENIGMA",
+      aboutContent: `SMART ENIGMA est un outil de chiffrement personnel et flexible. Pour une
+      haute securité, activez "Max-Enigma". Ne partagez jamais votre clé.`,
+      howTitle: "Comment ça marche ? 🤔",
+      howSteps: [
+        "Entrez votre clé secrète 🔑.",
+        "Saisissez votre message 📝.",
+        'Choisissez "Max-Enigma" pour AES-GCM (recommandé).',
+        "Cliquez CRYPTER pour chiffrer.",
+        "Le destinataire utilise la même clé pour déchiffrer."
+      ],
+      howNote: "La substitution est illustrative — AES-GCM est plus sûr."
+    },
+    en: {
+      labelKey: "Secret Key 🔐",
+      copyKey: "Copy Key",
+      inputPlaceholder: "Enter your message to encrypt 📝...",
+      buttonEncrypt: "ENCRYPT 🙈",
+      buttonDecrypt: "DECRYPT 🧐",
+      buttonClear: "CLEAR",
+      resultTitle: "RESULT 🤫👇",
+      outputPlaceholder: "The result will display here",
+      copyResult: "Copy",
+      aboutTitle: "About SMART ENIGMA",
+      aboutContent: `SMART ENIGMA is a personal and flexible encryption tool. For high security
+      enable "Max-Enigma". Never share your key.`,
+      howTitle: "How it works 🤔",
+      howSteps: [
+        "Enter your secret key 🔑.",
+        "Enter your message 📝.",
+        'Select "Max-Enigma" for AES-GCM (recommended).',
+        "Click ENCRYPT to secure the message.",
+        "Recipient uses the same key to decrypt."
+      ],
+      howNote: "Substitution is illustrative — AES-GCM is significantly stronger."
+    }
+  };
+
+  /* -------- Helpers -------- */
+  function showToast(msg, ms = 2200) {
+    toast.hidden = false;
+    toast.textContent = msg;
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.hidden = true, ms);
+  }
+
+  function detectLang() {
+    const nav = navigator.language || navigator.userLanguage || 'fr';
+    return nav.slice(0,2) === 'en' ? 'en' : 'fr';
+  }
+
+  /* -------- UI translate and init -------- */
+  function translateUI(lang) {
+    const t = translations[lang] || translations.fr;
+    $('#keyLabel').textContent = t.labelKey;
+    keyInput.placeholder = t.labelKey;
+    inputArea.placeholder = t.inputPlaceholder;
+    encryptBtn.textContent = t.buttonEncrypt;
+    decryptBtn.textContent = t.buttonDecrypt;
+    clearBtn.textContent = t.buttonClear;
+    resultTitle.textContent = t.resultTitle;
+    $('#aboutTitle').textContent = t.aboutTitle;
+    $('#aboutContent').textContent = t.aboutContent;
+    $('#howTitle').textContent = t.howTitle;
+    document.querySelector("pre").textContent = t.outputPlaceholder;
+    copyOutput.textContent = t.copyResult;
+
+    const stepsList = $('#howSteps');
+    stepsList.innerHTML = '';
+    t.howSteps.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = s;
+      stepsList.appendChild(li);
+    });
+    $('#howNote').textContent = t.howNote;
+  }
+
+  /* -------- Substitution cipher (legacy) -------- */
+  function generateSubstitution(key) {
+    let sum = 0;
+    for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i);
+    const letterShift = sum % 26;
+    const numberShift = sum % 10;
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const digits = "0123456789";
+    const map = {}, numMap = {};
+    for (let i = 0; i < 26; i++) {
+      map[alphabet[i]] = alphabet[(i + letterShift) % 26];
+    }
+    for (let i = 0; i < 10; i++) {
+      numMap[digits[i]] = digits[(i + numberShift) % 10];
+    }
+    return { map, numMap };
+  }
+
+  function substituteTransform(text, keyMap, reverse = false) {
+    const { map, numMap } = keyMap;
+    const rMap = reverse ? Object.fromEntries(Object.entries(map).map(([k,v]) => [v,k])) : map;
+    const rNum = reverse ? Object.fromEntries(Object.entries(numMap).map(([k,v]) => [v,k])) : numMap;
+    let out = '';
+    for (let ch of text) {
+      if (/[A-Z]/.test(ch)) out += rMap[ch] || ch;
+      else if (/[a-z]/.test(ch)) {
+        const up = ch.toUpperCase();
+        const enc = rMap[up] || up;
+        out += enc.toLowerCase();
+      } else if (/[0-9]/.test(ch)) out += rNum[ch] || ch;
+      else out += ch;
+    }
+    return out;
+  }
+
+  /* -------- Web Crypto AES-GCM helpers -------- */
+  async function deriveKey(password, salt, iterations = 100000) {
+    const enc = new TextEncoder();
+    const baseKey = await crypto.subtle.importKey(
+      'raw', enc.encode(password), {name:'PBKDF2'}, false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['encrypt','decrypt']
+    );
+  }
+
+  function concatBuffers(...buffers) {
+    let total = buffers.reduce((s,b)=>s+(b.byteLength||b.length),0);
+    const tmp = new Uint8Array(total);
+    let offset = 0;
+    for (const b of buffers) {
+      const u = new Uint8Array(b);
+      tmp.set(u, offset);
+      offset += u.length;
+    }
+    return tmp.buffer;
+  }
+
+  function bufToBase64(buf) {
+    return btoa(String.fromCharCode(...new Uint8Array(buf)));
+  }
+  function base64ToBuf(b64) {
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+    return arr.buffer;
+  }
+
+  async function encryptAesGcm(plain, password) {
+    const enc = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit
+    const key = await deriveKey(password, salt);
+    const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(plain));
+    // [salt][iv][ciphertext] -> base64
+    const blob = concatBuffers(salt.buffer, iv.buffer, ct);
+    // zero sensitive references (best-effort)
+    // key not exportable, so can't zero; we null refs
+    return bufToBase64(blob);
+  }
+
+  async function decryptAesGcm(b64blob, password) {
+    const blob = base64ToBuf(b64blob);
+    const arr = new Uint8Array(blob);
+    const salt = arr.slice(0,16).buffer;
+    const iv = arr.slice(16,28).buffer;
+    const ct = arr.slice(28).buffer;
+    const key = await deriveKey(password, salt);
+    const plainBuf = await crypto.subtle.decrypt({name:'AES-GCM', iv: new Uint8Array(iv)}, key, ct);
+    return new TextDecoder().decode(plainBuf);
+  }
+
+  /* -------- Core actions -------- */
+  async function encryptAction() {
+    try {
+      const key = keyInput.value || '';
+      if (!key) { showToast('Enter a key / Entrez une clé'); return; }
+      const text = inputArea.value || '';
+      if (!text) { showToast('No input / Aucun message'); return; }
+
+      if (useStrong.checked && window.crypto && crypto.subtle) {
+        encryptBtn.disabled = true;
+        resultTitle.textContent = translations[langSelect.value].resultTitle;
+        output.textContent = 'Encrypting…';
+        const cipher = await encryptAesGcm(text, key);
+        output.textContent = cipher;
+        showToast('Encrypted (AES) ✅');
+        // clear key variables references quickly
+      } else {
+        // substitution legacy
+        const keyMap = generateSubstitution(key);
+        output.textContent = substituteTransform(text, keyMap, false);
+        showToast('Encrypted (substitution) ✅');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Erreur ❌');
+    } finally {
+      encryptBtn.disabled = false;
+      // best-effort clear sensitive local refs
+    }
+  }
+
+  async function decryptAction() {
+    try {
+      const key = keyInput.value || '';
+      if (!key) { showToast('Enter a key / Entrez une clé'); return; }
+      const text = inputArea.value || '';
+      if (!text) { showToast('No input / Aucun message'); return; }
+
+      if (useStrong.checked && window.crypto && crypto.subtle) {
+        decryptBtn.disabled = true;
+        output.textContent = 'Decrypting…';
+        try {
+          const plain = await decryptAesGcm(text, key);
+          output.textContent = plain;
+          showToast('Decrypted (AES) ✅');
+        } catch (e) {
+          output.textContent = '';
+          showToast('Decrypt failed — wrong key or corrupted text');
+        }
+      } else {
+        const keyMap = generateSubstitution(key);
+        output.textContent = substituteTransform(text, keyMap, true);
+        showToast('Decrypted (substitution) ✅');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Erreur ❌');
+    } finally {
+      decryptBtn.disabled = false;
+    }
+  }
+
+  /* -------- Utilities -------- */
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Copié ✅');
+    } catch {
+      showToast('Échec copie ❌');
+    }
+  }
+
+  function clearAll() {
+    if (!confirm('Effacer le message ? / Clear the message?')) return;
+    inputArea.value = '';
+    output.textContent = '';
+  }
+
+  /* -------- Event wiring -------- */
+  langSelect.addEventListener('change', (e) => translateUI(e.target.value));
+  themeToggle.addEventListener('change', (e) => {
+    document.documentElement.dataset.theme = e.target.checked ? 'dark' : 'light';
+  });
+
+  encryptBtn.addEventListener('click', () => {
+    // run async but disable quickly
+    encryptAction();
+  });
+  decryptBtn.addEventListener('click', () => decryptAction());
+  clearBtn.addEventListener('click', () => clearAll());
+
+  copyKeyBtn.addEventListener('click', () => copyToClipboard(keyInput.value));
+  copyOutput.addEventListener('click', () => copyToClipboard(output.textContent || ''));
+
+  backToTop.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+  clearKeyBtn.addEventListener('click', () => { keyInput.value = ''; showToast('Key cleared'); });
+
+  // keyboard: Enter on key input triggers encrypt if Ctrl pressed
+  keyInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) encryptAction();
+  });
+
+  // initialize UI
+  document.addEventListener('DOMContentLoaded', () => {
+    const initialLang = detectLang();
+    langSelect.value = initialLang;
+    translateUI(initialLang);
+    // prefer saved theme if any
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
+    themeToggle.checked = prefersDark;
+  });
+
+  // SECURITY: clear key on unload (best-effort)
+  window.addEventListener('beforeunload', () => {
+    try {
+      keyInput.value = '';
+    } catch (e) {}
+  });
+
+})();
+  </script>
+</body>
+</html>
