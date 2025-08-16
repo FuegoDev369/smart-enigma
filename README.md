@@ -2,7 +2,7 @@
 
 > **Secure Personal Encryption Tool** - Protect your sensitive data with advanced AES-GCM encryption
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/FuegoDev369/smart-enigma?style=social)](https://github.com/FuegoDev369/smart-enigma)
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/FuegoDev369/smart-enigma/releases)
 [![Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://FuegoDev369.github.io/smart-enigma)
