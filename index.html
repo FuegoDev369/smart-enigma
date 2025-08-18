@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Smart Enigma — FuegoDev</title>
+    <!-- Font Awesome CDN -->
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,9 +30,14 @@
     <section class="key-block" aria-labelledby="keyLabel">
       <label id="keyLabel" for="keyInput"></label>
       <div class="key-row">
-        <input id="keyInput" type="password" autocomplete="new-password" inputmode="text" placeholder="" />
+        <div class="input-container">
+         <input id="keyInput" type="password" autocomplete="new-password"
+         inputmode="text" placeholder="" />
+         <i class="fa-solid fa-eye toggle-visibility" id="toggleSecret"></i>
+        </div>
         <button id="copyKey" class="btn small" aria-label="Copier la clé">📋</button>
       </div>
+      
       <div class="options">
         <label>
           <input id="useStrong" type="checkbox" />
@@ -413,6 +421,22 @@
   });
 
 })();
+
+/* eye icon Toggle script */
+const toggleBtn = document.getElementById("toggleSecret");
+    const secretInput = document.getElementById("keyInput");
+
+    toggleBtn.addEventListener("click", () => {
+      if (secretInput.type === "password") {
+        secretInput.type = "text";
+        toggleBtn.classList.remove("fa-eye");
+        toggleBtn.classList.add("fa-eye-slash");
+      } else {
+        secretInput.type = "password";
+        toggleBtn.classList.remove("fa-eye-slash");
+        toggleBtn.classList.add("fa-eye");
+      }
+    });
   </script>
 </body>
 </html>
