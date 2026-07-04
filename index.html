@@ -90,6 +90,10 @@
       <symbol id="icon-check" viewBox="0 0 24 24">
         <path d="M4.5 12.5 L9.5 17.5 L19.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       </symbol>
+      <symbol id="icon-file" viewBox="0 0 24 24">
+        <path d="M6.5 3.5 H13.5 L18 8 V20 a1 1 0 0 1 -1 1 H6.5 a1 1 0 0 1 -1 -1 V4.5 a1 1 0 0 1 1 -1 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M13.5 3.5 V7 a1 1 0 0 0 1 1 H18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -269,6 +273,51 @@
       </div>
     </section>
 
+    <section class="panel file-block" aria-labelledby="fileSectionLabelText">
+      <span class="panel-corner panel-corner--tl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--tr" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--br" aria-hidden="true"></span>
+
+      <p class="panel-label">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg>
+        <span id="fileSectionLabelText"></span>
+      </p>
+
+      <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-describedby="fileSizeLimitHintText">
+        <svg class="icon dropzone-icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg>
+        <p class="dropzone-label" id="fileDropLabelText"></p>
+        <input type="file" id="fileInput" class="sr-only" tabindex="-1" aria-hidden="true" />
+      </div>
+      <p class="file-size-hint" id="fileSizeLimitHintText"></p>
+
+      <div class="file-selected" id="fileSelectedRow" hidden aria-live="polite">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg>
+        <span class="file-selected-name" id="fileSelectedName"></span>
+        <button type="button" id="fileClearBtn" class="btn tiny icon-only">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg>
+        </button>
+      </div>
+
+      <div class="actions file-actions" role="toolbar" aria-label="File actions">
+        <button id="fileEncryptBtn" class="btn primary">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-lock-closed"></use></svg>
+          <span class="btn-label" id="fileEncryptBtnText"></span>
+        </button>
+        <button id="fileDecryptBtn" class="btn">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-lock-open"></use></svg>
+          <span class="btn-label" id="fileDecryptBtnText"></span>
+        </button>
+      </div>
+
+      <div class="file-result" id="fileResultRow" hidden>
+        <a id="fileDownloadLink" class="btn small" download>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-output"></use></svg>
+          <span class="btn-label" id="downloadResultText"></span>
+        </a>
+      </div>
+    </section>
+
     <hr />
 
     <section id="about" class="info">
@@ -355,9 +404,28 @@
   const fingerprintToggleText = $('#fingerprintToggleText');
   const panicWipeHintText = $('#panicWipeHintText');
 
+  // Phase B additions (v4.0.0) — file encryption
+  const fileSectionLabelText = $('#fileSectionLabelText');
+  const dropzone = $('#dropzone');
+  const fileInput = $('#fileInput');
+  const fileDropLabelText = $('#fileDropLabelText');
+  const fileSizeLimitHintText = $('#fileSizeLimitHintText');
+  const fileSelectedRow = $('#fileSelectedRow');
+  const fileSelectedName = $('#fileSelectedName');
+  const fileClearBtn = $('#fileClearBtn');
+  const fileEncryptBtn = $('#fileEncryptBtn');
+  const fileDecryptBtn = $('#fileDecryptBtn');
+  const fileEncryptBtnText = $('#fileEncryptBtnText');
+  const fileDecryptBtnText = $('#fileDecryptBtnText');
+  const fileResultRow = $('#fileResultRow');
+  const fileDownloadLink = $('#fileDownloadLink');
+  const downloadResultText = $('#downloadResultText');
+
   let hasResult = false;
   let currentLang = 'en';
   let fingerprintVisible = false;
+  let selectedFile = null;
+  let fileResultBlobUrl = null;
 
   /* -------- Translations (provided by SMART-ENIGMA-i18n, integrated as-is) -------- */
   const translations = {
@@ -415,7 +483,23 @@
       fingerprintHint: 'Compare this fingerprint with the other party to confirm you share the same key, without revealing it.',
       fingerprintShow: 'Show fingerprint',
       fingerprintHide: 'Hide fingerprint',
-      panicWipeHint: 'Press Escape three times to instantly wipe all fields.'
+      panicWipeHint: 'Press Escape three times to instantly wipe all fields.',
+      fileSectionLabel: 'File Encryption',
+      fileDropLabel: 'Drag and drop a file here, or click to browse',
+      fileDropActive: 'Release to add the file',
+      fileSizeLimitHint: 'Files are processed entirely in memory, so a size limit applies.',
+      fileTooLarge: 'This file exceeds the size limit. Try a smaller file.',
+      fileNoFile: 'Select a file first.',
+      fileEncryptAction: 'Encrypt File',
+      fileDecryptAction: 'Decrypt File',
+      fileEncrypting: 'Encrypting file…',
+      fileDecrypting: 'Decrypting file…',
+      fileEncryptDone: 'File encrypted successfully.',
+      fileDecryptDone: 'File decrypted successfully.',
+      fileDecryptFail: 'Decryption failed. Check your key, or the file may not have been encrypted with Smart Enigma.',
+      fileClearAction: 'Remove file',
+      downloadResult: 'Download Result',
+      fileSelectedAria: 'File selected: {filename}'
     },
 
     // --- Français ---
@@ -467,12 +551,28 @@
       keyStrengthWeak: 'Faible',
       keyStrengthMedium: 'Moyenne',
       keyStrengthStrong: 'Forte',
-      keyStrengthHint: 'Estimation locale indicative uniquement — ne garantit pas la sécurité de votre clé.',
+      keyStrengthHint: 'Estimation locale indicative uniquement.',
       fingerprintLabel: 'Empreinte de la clé',
       fingerprintHint: 'Comparez cette empreinte avec votre interlocuteur pour confirmer que vous partagez la même clé, sans la révéler.',
       fingerprintShow: 'Afficher l\'empreinte',
       fingerprintHide: 'Masquer l\'empreinte',
-      panicWipeHint: 'Appuyez trois fois sur Échap pour effacer instantanément tous les champs.'
+      panicWipeHint: 'Appuyez trois fois sur Échap pour effacer instantanément tous les champs.',
+      fileSectionLabel: 'Chiffrement de fichiers',
+      fileDropLabel: 'Glissez-déposez un fichier ici, ou cliquez pour parcourir',
+      fileDropActive: 'Relâchez pour ajouter le fichier',
+      fileSizeLimitHint: 'Les fichiers sont traités entièrement en mémoire, une limite de taille s\'applique donc.',
+      fileTooLarge: 'Ce fichier dépasse la limite de taille. Essayez avec un fichier plus petit.',
+      fileNoFile: 'Sélectionnez d\'abord un fichier.',
+      fileEncryptAction: 'Chiffrer le fichier',
+      fileDecryptAction: 'Déchiffrer le fichier',
+      fileEncrypting: 'Chiffrement du fichier en cours…',
+      fileDecrypting: 'Déchiffrement du fichier en cours…',
+      fileEncryptDone: 'Fichier chiffré avec succès.',
+      fileDecryptDone: 'Fichier déchiffré avec succès.',
+      fileDecryptFail: 'Échec du déchiffrement. Vérifiez votre clé, ou le fichier n\'a peut-être pas été chiffré avec Smart Enigma.',
+      fileClearAction: 'Retirer le fichier',
+      downloadResult: 'Télécharger le résultat',
+      fileSelectedAria: 'Fichier sélectionné : {filename}'
     },
 
     // --- 中文 (简体) ---
@@ -524,12 +624,28 @@
       keyStrengthWeak: '弱',
       keyStrengthMedium: '中等',
       keyStrengthStrong: '强',
-      keyStrengthHint: '仅为本地估算，不构成安全保证。',
+      keyStrengthHint: '仅为本地估算',
       fingerprintLabel: '密钥指纹',
       fingerprintHint: '与对方比对此指纹，可在不泄露密钥的情况下确认双方使用相同的密钥。',
       fingerprintShow: '显示指纹',
       fingerprintHide: '隐藏指纹',
-      panicWipeHint: '连续按三次 Esc 键可立即清空所有字段。'
+      panicWipeHint: '连续按三次 Esc 键可立即清空所有字段。',
+      fileSectionLabel: '文件加密',
+      fileDropLabel: '将文件拖放到此处，或点击浏览',
+      fileDropActive: '松开以添加文件',
+      fileSizeLimitHint: '文件将完全在内存中处理，因此存在大小限制。',
+      fileTooLarge: '该文件超出大小限制，请尝试更小的文件。',
+      fileNoFile: '请先选择一个文件。',
+      fileEncryptAction: '加密文件',
+      fileDecryptAction: '解密文件',
+      fileEncrypting: '正在加密文件…',
+      fileDecrypting: '正在解密文件…',
+      fileEncryptDone: '文件加密成功。',
+      fileDecryptDone: '文件解密成功。',
+      fileDecryptFail: '解密失败。请检查密钥，该文件也可能未使用 Smart Enigma 加密。',
+      fileClearAction: '移除文件',
+      downloadResult: '下载结果',
+      fileSelectedAria: '已选择文件：{filename}'
     },
 
     // --- Español ---
@@ -581,12 +697,28 @@
       keyStrengthWeak: 'Débil',
       keyStrengthMedium: 'Media',
       keyStrengthStrong: 'Fuerte',
-      keyStrengthHint: 'Estimación local orientativa; no garantiza la seguridad de su clave.',
+      keyStrengthHint: 'Estimación local orientativa.',
       fingerprintLabel: 'Huella de la clave',
       fingerprintHint: 'Compare esta huella con la otra persona para confirmar que comparten la misma clave, sin revelarla.',
       fingerprintShow: 'Mostrar huella',
       fingerprintHide: 'Ocultar huella',
-      panicWipeHint: 'Pulse Escape tres veces para borrar todos los campos al instante.'
+      panicWipeHint: 'Pulse Escape tres veces para borrar todos los campos al instante.',
+      fileSectionLabel: 'Cifrado de archivos',
+      fileDropLabel: 'Arrastra y suelta un archivo aquí, o haz clic para explorar',
+      fileDropActive: 'Suelta para añadir el archivo',
+      fileSizeLimitHint: 'Los archivos se procesan completamente en memoria, por lo que existe un límite de tamaño.',
+      fileTooLarge: 'Este archivo supera el límite de tamaño. Prueba con uno más pequeño.',
+      fileNoFile: 'Selecciona primero un archivo.',
+      fileEncryptAction: 'Cifrar archivo',
+      fileDecryptAction: 'Descifrar archivo',
+      fileEncrypting: 'Cifrando archivo…',
+      fileDecrypting: 'Descifrando archivo…',
+      fileEncryptDone: 'Archivo cifrado correctamente.',
+      fileDecryptDone: 'Archivo descifrado correctamente.',
+      fileDecryptFail: 'Error al descifrar. Verifica tu clave; puede que el archivo no haya sido cifrado con Smart Enigma.',
+      fileClearAction: 'Quitar archivo',
+      downloadResult: 'Descargar resultado',
+      fileSelectedAria: 'Archivo seleccionado: {filename}'
     },
 
     // --- Русский ---
@@ -638,12 +770,28 @@
       keyStrengthWeak: 'Слабый',
       keyStrengthMedium: 'Средний',
       keyStrengthStrong: 'Надёжный',
-      keyStrengthHint: 'Это лишь локальная оценка — она не гарантирует безопасность.',
+      keyStrengthHint: 'Это лишь локальная оценка',
       fingerprintLabel: 'Отпечаток ключа',
       fingerprintHint: 'Сравните этот отпечаток с собеседником, чтобы убедиться в совпадении ключей, не раскрывая сам ключ.',
       fingerprintShow: 'Показать отпечаток',
       fingerprintHide: 'Скрыть отпечаток',
-      panicWipeHint: 'Трижды нажмите Escape, чтобы мгновенно очистить все поля.'
+      panicWipeHint: 'Трижды нажмите Escape, чтобы мгновенно очистить все поля.',
+      fileSectionLabel: 'Шифрование файлов',
+      fileDropLabel: 'Перетащите файл сюда или нажмите, чтобы выбрать',
+      fileDropActive: 'Отпустите, чтобы добавить файл',
+      fileSizeLimitHint: 'Файлы обрабатываются полностью в памяти, поэтому действует ограничение по размеру.',
+      fileTooLarge: 'Файл превышает допустимый размер. Попробуйте файл меньшего размера.',
+      fileNoFile: 'Сначала выберите файл.',
+      fileEncryptAction: 'Зашифровать файл',
+      fileDecryptAction: 'Расшифровать файл',
+      fileEncrypting: 'Идёт шифрование файла…',
+      fileDecrypting: 'Идёт расшифровка файла…',
+      fileEncryptDone: 'Файл успешно зашифрован.',
+      fileDecryptDone: 'Файл успешно расшифрован.',
+      fileDecryptFail: 'Ошибка расшифровки. Проверьте ключ — возможно, файл был зашифрован не с помощью Smart Enigma.',
+      fileClearAction: 'Удалить файл',
+      downloadResult: 'Скачать результат',
+      fileSelectedAria: 'Выбран файл: {filename}'
     },
 
     // --- Deutsch ---
@@ -695,12 +843,28 @@
       keyStrengthWeak: 'Schwach',
       keyStrengthMedium: 'Mittel',
       keyStrengthStrong: 'Stark',
-      keyStrengthHint: 'Nur eine lokale Schätzung — keine Sicherheitsgarantie.',
+      keyStrengthHint: 'Nur eine lokale Schätzung',
       fingerprintLabel: 'Schlüssel-Fingerabdruck',
       fingerprintHint: 'Vergleichen Sie diesen Fingerabdruck mit Ihrem Gegenüber, um zu bestätigen, dass Sie denselben Schlüssel verwenden, ohne ihn preiszugeben.',
       fingerprintShow: 'Fingerabdruck anzeigen',
       fingerprintHide: 'Fingerabdruck ausblenden',
-      panicWipeHint: 'Escape dreimal drücken, um alle Felder sofort zu löschen.'
+      panicWipeHint: 'Escape dreimal drücken, um alle Felder sofort zu löschen.',
+      fileSectionLabel: 'Dateiverschlüsselung',
+      fileDropLabel: 'Datei hierher ziehen oder klicken, um eine auszuwählen',
+      fileDropActive: 'Loslassen, um die Datei hinzuzufügen',
+      fileSizeLimitHint: 'Dateien werden vollständig im Arbeitsspeicher verarbeitet, daher gilt eine Größenbeschränkung.',
+      fileTooLarge: 'Diese Datei überschreitet die Größenbeschränkung. Versuchen Sie es mit einer kleineren Datei.',
+      fileNoFile: 'Bitte zuerst eine Datei auswählen.',
+      fileEncryptAction: 'Datei verschlüsseln',
+      fileDecryptAction: 'Datei entschlüsseln',
+      fileEncrypting: 'Datei wird verschlüsselt…',
+      fileDecrypting: 'Datei wird entschlüsselt…',
+      fileEncryptDone: 'Datei erfolgreich verschlüsselt.',
+      fileDecryptDone: 'Datei erfolgreich entschlüsselt.',
+      fileDecryptFail: 'Entschlüsselung fehlgeschlagen. Überprüfen Sie Ihren Schlüssel – die Datei wurde möglicherweise nicht mit Smart Enigma verschlüsselt.',
+      fileClearAction: 'Datei entfernen',
+      downloadResult: 'Ergebnis herunterladen',
+      fileSelectedAria: 'Datei ausgewählt: {filename}'
     },
 
     // --- Português ---
@@ -752,12 +916,28 @@
       keyStrengthWeak: 'Fraca',
       keyStrengthMedium: 'Média',
       keyStrengthStrong: 'Forte',
-      keyStrengthHint: 'Estimativa local apenas — não garante a segurança da sua chave.',
+      keyStrengthHint: 'Estimativa local apenas',
       fingerprintLabel: 'Impressão digital da chave',
       fingerprintHint: 'Compare esta impressão com a outra pessoa para confirmar que ambos usam a mesma chave, sem revelá-la.',
       fingerprintShow: 'Mostrar impressão digital',
       fingerprintHide: 'Ocultar impressão digital',
-      panicWipeHint: 'Pressione Esc três vezes para limpar todos os campos instantaneamente.'
+      panicWipeHint: 'Pressione Esc três vezes para limpar todos os campos instantaneamente.',
+      fileSectionLabel: 'Criptografia de arquivos',
+      fileDropLabel: 'Arraste e solte um arquivo aqui, ou clique para procurar',
+      fileDropActive: 'Solte para adicionar o arquivo',
+      fileSizeLimitHint: 'Os arquivos são processados inteiramente na memória, por isso há um limite de tamanho.',
+      fileTooLarge: 'Este arquivo excede o limite de tamanho. Tente um arquivo menor.',
+      fileNoFile: 'Selecione um arquivo primeiro.',
+      fileEncryptAction: 'Criptografar arquivo',
+      fileDecryptAction: 'Descriptografar arquivo',
+      fileEncrypting: 'Criptografando arquivo…',
+      fileDecrypting: 'Descriptografando arquivo…',
+      fileEncryptDone: 'Arquivo criptografado com sucesso.',
+      fileDecryptDone: 'Arquivo descriptografado com sucesso.',
+      fileDecryptFail: 'Falha na descriptografia. Verifique sua chave; o arquivo pode não ter sido criptografado com o Smart Enigma.',
+      fileClearAction: 'Remover arquivo',
+      downloadResult: 'Baixar resultado',
+      fileSelectedAria: 'Arquivo selecionado: {filename}'
     },
 
     // --- Italiano ---
@@ -809,12 +989,28 @@
       keyStrengthWeak: 'Debole',
       keyStrengthMedium: 'Media',
       keyStrengthStrong: 'Forte',
-      keyStrengthHint: 'Solo una stima locale indicativa: non garantisce la sicurezza della chiave.',
+      keyStrengthHint: 'Solo una stima locale indicativa',
       fingerprintLabel: 'Impronta della chiave',
       fingerprintHint: 'Confronta questa impronta con l\'altra persona per confermare che usate la stessa chiave, senza rivelarla.',
       fingerprintShow: 'Mostra impronta',
       fingerprintHide: 'Nascondi impronta',
-      panicWipeHint: 'Premi Esc tre volte per cancellare istantaneamente tutti i campi.'
+      panicWipeHint: 'Premi Esc tre volte per cancellare istantaneamente tutti i campi.',
+      fileSectionLabel: 'Crittografia dei file',
+      fileDropLabel: 'Trascina un file qui, oppure fai clic per sfogliare',
+      fileDropActive: 'Rilascia per aggiungere il file',
+      fileSizeLimitHint: 'I file vengono elaborati interamente in memoria, quindi è previsto un limite di dimensione.',
+      fileTooLarge: 'Questo file supera il limite di dimensione. Prova con un file più piccolo.',
+      fileNoFile: 'Seleziona prima un file.',
+      fileEncryptAction: 'Crittografa file',
+      fileDecryptAction: 'Decrittografa file',
+      fileEncrypting: 'Crittografia del file in corso…',
+      fileDecrypting: 'Decrittografia del file in corso…',
+      fileEncryptDone: 'File crittografato con successo.',
+      fileDecryptDone: 'File decrittografato con successo.',
+      fileDecryptFail: 'Decrittografia non riuscita. Controlla la chiave; il file potrebbe non essere stato crittografato con Smart Enigma.',
+      fileClearAction: 'Rimuovi file',
+      downloadResult: 'Scarica risultato',
+      fileSelectedAria: 'File selezionato: {filename}'
     },
 
     // --- 한국어 ---
@@ -866,12 +1062,28 @@
       keyStrengthWeak: '약함',
       keyStrengthMedium: '보통',
       keyStrengthStrong: '강함',
-      keyStrengthHint: '로컬 추정치일 뿐이며 보안을 보장하지 않습니다.',
+      keyStrengthHint: '이는 지역적인 추정치일 뿐입니다.',
       fingerprintLabel: '키 지문',
       fingerprintHint: '상대방과 이 지문을 비교하면 키를 노출하지 않고도 동일한 키를 사용하는지 확인할 수 있습니다.',
       fingerprintShow: '지문 표시',
       fingerprintHide: '지문 숨기기',
-      panicWipeHint: 'Esc 키를 세 번 누르면 모든 필드가 즉시 지워집니다.'
+      panicWipeHint: 'Esc 키를 세 번 누르면 모든 필드가 즉시 지워집니다.',
+      fileSectionLabel: '파일 암호화',
+      fileDropLabel: '파일을 여기로 드래그하거나 클릭하여 찾아보기',
+      fileDropActive: '놓으면 파일이 추가됩니다',
+      fileSizeLimitHint: '파일은 전적으로 메모리에서 처리되므로 크기 제한이 있습니다.',
+      fileTooLarge: '이 파일은 크기 제한을 초과했습니다. 더 작은 파일을 시도해 주세요.',
+      fileNoFile: '먼저 파일을 선택해 주세요.',
+      fileEncryptAction: '파일 암호화',
+      fileDecryptAction: '파일 복호화',
+      fileEncrypting: '파일 암호화 중…',
+      fileDecrypting: '파일 복호화 중…',
+      fileEncryptDone: '파일이 성공적으로 암호화되었습니다.',
+      fileDecryptDone: '파일이 성공적으로 복호화되었습니다.',
+      fileDecryptFail: '복호화에 실패했습니다. 키를 확인하거나, 파일이 Smart Enigma로 암호화되지 않았을 수 있습니다.',
+      fileClearAction: '파일 제거',
+      downloadResult: '결과 다운로드',
+      fileSelectedAria: '선택된 파일: {filename}'
     }
   };
 
@@ -949,6 +1161,19 @@
     fingerprintToggleText.textContent = fingerprintVisible ? d.fingerprintHide : d.fingerprintShow;
     panicWipeHintText.textContent = d.panicWipeHint;
     refreshKeyStrength();
+
+    // Phase B additions (v4.0.0) — file encryption
+    fileSectionLabelText.textContent = d.fileSectionLabel;
+    fileDropLabelText.textContent = d.fileDropLabel;
+    fileSizeLimitHintText.textContent = d.fileSizeLimitHint;
+    fileEncryptBtnText.textContent = d.fileEncryptAction;
+    fileDecryptBtnText.textContent = d.fileDecryptAction;
+    downloadResultText.textContent = d.downloadResult;
+    fileClearBtn.title = d.fileClearAction;
+    fileClearBtn.setAttribute('aria-label', d.fileClearAction);
+    if (selectedFile) {
+      fileSelectedRow.setAttribute('aria-label', d.fileSelectedAria.replace('{filename}', selectedFile.name));
+    }
   }
 
   function updateWeakWarning() {
@@ -1140,6 +1365,37 @@
     return new Uint8Array(plainBuf);
   }
 
+  /* -------- File payload wrapper (v4.0.0) --------
+     Thin layer built ENTIRELY OUTSIDE the crypto core: it prepends a
+     small 2-byte length + filename header to the file's raw bytes
+     before they reach encryptBytes(), so the original filename can be
+     restored automatically after decryptBytes(). No cryptographic
+     parameter is touched here — this only shapes the plaintext byte
+     layout that the untouched AES-256-GCM core then encrypts/decrypts
+     as an opaque blob, exactly like it already does for text. */
+  function encodeFilePayload(file, contentBytes) {
+    const nameBytes = new TextEncoder().encode(file.name);
+    const len = Math.min(nameBytes.length, 65535);
+    const header = new Uint8Array(2 + len);
+    header[0] = (len >> 8) & 0xff;
+    header[1] = len & 0xff;
+    header.set(nameBytes.slice(0, len), 2);
+    const total = new Uint8Array(header.length + contentBytes.length);
+    total.set(header, 0);
+    total.set(contentBytes, header.length);
+    return total;
+  }
+
+  function decodeFilePayload(bytes) {
+    const fallback = { name: 'decrypted_file', content: bytes };
+    if (bytes.length < 2) return fallback;
+    const len = (bytes[0] << 8) | bytes[1];
+    if (2 + len > bytes.length) return fallback;
+    const nameBytes = bytes.slice(2, 2 + len);
+    const name = new TextDecoder().decode(nameBytes) || 'decrypted_file';
+    return { name, content: bytes.slice(2 + len) };
+  }
+
   async function encryptAesGcm(plain, password) {
     const enc = new TextEncoder();
     const cipherBytes = await encryptBytes(enc.encode(plain), password);
@@ -1219,6 +1475,104 @@
     }
   }
 
+  /* -------- File encryption (v4.0.0) --------
+     Files are read fully into memory (File.arrayBuffer()), wrapped
+     with encodeFilePayload(), then passed to the existing byte-level
+     encryptBytes()/decryptBytes() core untouched. Kept in memory only
+     (no streaming), hence MAX_FILE_SIZE below. */
+  const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB — reasonable in-memory limit
+
+  function clearFileResult() {
+    if (fileResultBlobUrl) {
+      URL.revokeObjectURL(fileResultBlobUrl);
+      fileResultBlobUrl = null;
+    }
+    fileResultRow.hidden = true;
+    fileDownloadLink.removeAttribute('href');
+    fileDownloadLink.removeAttribute('download');
+  }
+
+  function setSelectedFile(file) {
+    selectedFile = file;
+    const d = t();
+    if (file) {
+      fileSelectedRow.hidden = false;
+      fileSelectedName.textContent = file.name;
+      fileSelectedName.title = file.name;
+      fileSelectedRow.setAttribute('aria-label', d.fileSelectedAria.replace('{filename}', file.name));
+    } else {
+      fileSelectedRow.hidden = true;
+      fileSelectedName.textContent = '';
+      fileSelectedName.removeAttribute('title');
+      fileSelectedRow.removeAttribute('aria-label');
+    }
+    clearFileResult();
+  }
+
+  function handleFileSelected(file) {
+    const d = t();
+    if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      showToast(d.fileTooLarge);
+      fileInput.value = '';
+      return;
+    }
+    setSelectedFile(file);
+  }
+
+  function presentFileResult(blob, filename) {
+    if (fileResultBlobUrl) URL.revokeObjectURL(fileResultBlobUrl);
+    fileResultBlobUrl = URL.createObjectURL(blob);
+    fileDownloadLink.href = fileResultBlobUrl;
+    fileDownloadLink.download = filename;
+    fileResultRow.hidden = false;
+  }
+
+  async function fileEncryptAction() {
+    const d = t();
+    const key = keyInput.value || '';
+    if (!key) { showToast(d.noKey); return; }
+    if (!selectedFile) { showToast(d.fileNoFile); return; }
+    try {
+      fileEncryptBtn.disabled = true;
+      showToast(d.fileEncrypting);
+      const buf = await selectedFile.arrayBuffer();
+      const payload = encodeFilePayload(selectedFile, new Uint8Array(buf));
+      const cipherBytes = await encryptBytes(payload, key);
+      const blob = new Blob([cipherBytes], { type: 'application/octet-stream' });
+      presentFileResult(blob, selectedFile.name + '.enigma');
+      showToast(d.fileEncryptDone);
+    } catch (err) {
+      console.error(err);
+      showToast(d.genericError);
+    } finally {
+      fileEncryptBtn.disabled = false;
+    }
+  }
+
+  async function fileDecryptAction() {
+    const d = t();
+    const key = keyInput.value || '';
+    if (!key) { showToast(d.noKey); return; }
+    if (!selectedFile) { showToast(d.fileNoFile); return; }
+    try {
+      fileDecryptBtn.disabled = true;
+      showToast(d.fileDecrypting);
+      const buf = await selectedFile.arrayBuffer();
+      const plainBytes = await decryptBytes(new Uint8Array(buf), key);
+      const { name, content } = decodeFilePayload(plainBytes);
+      const blob = new Blob([content], { type: 'application/octet-stream' });
+      presentFileResult(blob, name);
+      showToast(d.fileDecryptDone);
+    } catch (err) {
+      console.error(err);
+      clearFileResult();
+      showToast(d.fileDecryptFail);
+    } finally {
+      fileDecryptBtn.disabled = false;
+    }
+  }
+
   /* -------- Utilities -------- */
   async function copyToClipboard(text) {
     const d = t();
@@ -1277,11 +1631,15 @@
     refreshKeyStrength();
     toast.hidden = true;
 
+    // Phase B: a selected/encrypted file is sensitive too — wipe it.
+    fileInput.value = '';
+    setSelectedFile(null);
+
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText('');
       }
-    } catch (e) { /* best-effort uniquement, on ignore silencieusement */ }
+    } catch (e) { /* best-effort only, silently ignored */ }
 
     keyInput.blur();
     inputArea.blur();
@@ -1334,6 +1692,41 @@
     }
   });
 
+  // Phase B — file dropzone (click, keyboard, and drag & drop)
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dropzone--active');
+    fileDropLabelText.textContent = t().fileDropActive;
+  });
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dropzone--active');
+    fileDropLabelText.textContent = t().fileDropLabel;
+  });
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dropzone--active');
+    fileDropLabelText.textContent = t().fileDropLabel;
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) handleFileSelected(f);
+  });
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files && fileInput.files[0];
+    if (f) handleFileSelected(f);
+  });
+  fileClearBtn.addEventListener('click', () => {
+    fileInput.value = '';
+    setSelectedFile(null);
+  });
+  fileEncryptBtn.addEventListener('click', () => fileEncryptAction());
+  fileDecryptBtn.addEventListener('click', () => fileDecryptAction());
+
   toggleSecret.addEventListener('click', () => {
     const showing = keyInput.type === 'text';
     keyInput.type = showing ? 'password' : 'text';
@@ -1357,6 +1750,7 @@
 
   window.addEventListener('beforeunload', () => {
     try { keyInput.value = ''; } catch (e) {}
+    try { if (fileResultBlobUrl) URL.revokeObjectURL(fileResultBlobUrl); } catch (e) {}
   });
 
   document.addEventListener('DOMContentLoaded', () => {

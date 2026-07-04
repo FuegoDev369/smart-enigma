@@ -7,10 +7,11 @@ A client-side, offline text encryption tool with real AES-256-GCM — nothing ev
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 ![License](https://img.shields.io/github/license/fuegodev369/smart-enigma)
-![Version](https://img.shields.io/badge/version-3.0.1-blue)
+![Version](https://img.shields.io/badge/version-4.0.0-blue)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![SMART-ENIGMA](https://img.shields.io/badge/SMART--ENIGMA-AABBCC?logo=github&logoColor=white)
 
-![Interface Screenshot](assets/v3.0.1-screenshot.png)
+![Interface Screenshot](assets/v4.0.0-screenshot.png)
 
 ## Features
 
@@ -24,6 +25,7 @@ A client-side, offline text encryption tool with real AES-256-GCM — nothing ev
 - ♿ Accessible: keyboard navigation, `aria-live` regions, `prefers-reduced-motion` and `prefers-contrast` support
 - 📴 Fully offline-capable — works from downloaded files, no install, no server
 - 🧩 Optional legacy substitution cipher, clearly labeled as a demo (not secure) for educational comparison
+- 📁 **File encryption** — drag & drop or browse any file (up to 25 MB), encrypt/decrypt it with the same AES-256-GCM engine, original filename restored automatically on decryption
 
 ## Requirements
 
@@ -75,6 +77,9 @@ Smart Enigma is a single-page app — there is no command line. Everything happe
 | Panic wipe | Press Escape three times to instantly clear key, message, and result |
 | Language selector | Switch between 9 supported languages |
 | Theme toggle | Switch between light and dark mode |
+| File dropzone | Drag & drop, click to browse, or use the keyboard to select a file (max 25 MB) |
+| Encrypt File | Encrypts the selected file and offers it for download as `filename.enigma` |
+| Decrypt File | Decrypts a `.enigma` file and restores it under its original filename |
 
 ## Interactive flow example
 
@@ -100,6 +105,8 @@ The encrypted result is a single base64 string containing the random salt, the r
 xN9m2QeR8pKzV3sLtY7bJ4cD1wA6gU0iO5hF2nE8...
 ```
 
+Encrypting a file follows the same principle but produces a downloadable binary blob (`document.pdf.enigma`) instead of text. Decrypting it restores the original file under its original name.
+
 ## Default behavior
 
 | Situation | Behavior |
@@ -112,6 +119,8 @@ xN9m2QeR8pKzV3sLtY7bJ4cD1wA6gU0iO5hF2nE8...
 | Triple Escape press | Key, message, and result wiped instantly, no confirmation |
 | Browser language unsupported | Falls back to English |
 | System theme | Detected automatically on first load |
+| File larger than 25 MB | Toast warning, file rejected |
+| Wrong key on file decrypt | "Decryption failed" toast, no file produced |
 
 ## Contributing
 
