@@ -7,10 +7,7 @@ A client-side, offline text encryption tool with real AES-256-GCM — nothing ev
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)
-![Build
-Status](https://img.shields.io/github/actions/workflow/status/fuegodev369/smart-enigma/main.yml?branch=main&label=build)
 ![License](https://img.shields.io/github/license/fuegodev369/smart-enigma)
-![Release](https://img.shields.io/github/v/release/fuegodev369/smart-enigma)
 ![Status](https://img.shields.io/badge/Status-In_Progress-yellow)
 ![Version](https://img.shields.io/badge/version-2.0.1-blue)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
