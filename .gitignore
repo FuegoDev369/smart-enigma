@@ -11,6 +11,7 @@ Thumbs.db
 *.log
 *.bak
 *.tmp
+CHANGELOG.md
 
 # Termux / Android
 /storage/
@@ -18,3 +19,6 @@ Thumbs.db
 
 # Archives produced by the packaging pipeline
 *.zip
+
+# Dev-Tools
+Easy_Github_commiter_v4.1.0.py

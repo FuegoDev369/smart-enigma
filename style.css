@@ -704,6 +704,129 @@ section {
   margin-top: 0.15em;
 }
 
+/* -------- Key strength meter (v3.0.0) -------- */
+.strength-meter {
+  margin-top: var(--space-md);
+}
+
+.strength-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.strength-level {
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+}
+
+.strength-bar {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.strength-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: var(--radius-pill);
+  background: var(--danger-color);
+  transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+.strength-meter[data-level="medium"] .strength-fill {
+  background: var(--brass);
+}
+
+.strength-meter[data-level="strong"] .strength-fill {
+  background: var(--cipher);
+}
+
+.strength-meter[data-level="medium"] .strength-level {
+  color: var(--brass);
+}
+
+.strength-meter[data-level="strong"] .strength-level {
+  color: var(--cipher);
+}
+
+.strength-meter[data-level="weak"] .strength-level {
+  color: var(--danger-color);
+}
+
+.strength-hint {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* -------- Key fingerprint / safety number (v3.0.0) -------- */
+.fingerprint-block {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px dashed var(--border-color);
+}
+
+.fingerprint-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.fingerprint-title .icon {
+  color: var(--cipher);
+  width: 1rem;
+  height: 1rem;
+}
+
+.fingerprint-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  line-height: 1.5;
+}
+
+.fingerprint-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.fingerprint-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.6rem;
+  color: var(--cipher);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* -------- Panic-wipe discoverability hint (v3.0.0) -------- */
+.panic-hint {
+  margin-top: var(--space-md);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  opacity: 0.75;
+}
+
 /* --------------------------------------------------------------------------
    9. MESSAGE PANEL / ACTIONS
    -------------------------------------------------------------------------- */

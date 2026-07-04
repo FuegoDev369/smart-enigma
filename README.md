@@ -6,14 +6,11 @@ A client-side, offline text encryption tool with real AES-256-GCM — nothing ev
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)
 ![License](https://img.shields.io/github/license/fuegodev369/smart-enigma)
-![Status](https://img.shields.io/badge/Status-In_Progress-yellow)
-![Version](https://img.shields.io/badge/version-2.0.1-blue)
+![Version](https://img.shields.io/badge/version-3.0.1-blue)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
-![SMART-ENIGMA](https://img.shields.io/badge/SMART--ENIGMA-grey?logo=github&logoColor=white)
 
-![Interface Screeshot](assets/screenshot.png)
+![Interface Screenshot](assets/v3.0.1-screenshot.png)
 
 ## Features
 
@@ -21,9 +18,11 @@ A client-side, offline text encryption tool with real AES-256-GCM — nothing ev
 - 🕵️ **Zero network calls** — no analytics, no tracking, no external fonts or CDNs
 - 🌍 **9 languages** — English, French, Chinese, Spanish, Russian, German, Portuguese, Italian, Korean (auto-detected from the browser)
 - 🌗 **Light / dark theme** with system preference detection
+- 🗝️ Key strength indicator and key fingerprint (SHA-256 safety number) to verify a shared key without revealing it
+- ⚠️ Panic wipe — press Escape three times to instantly clear the key, message, and result
 - 🗝️ Key is never stored or transmitted, and is wiped from memory when the tab closes
 - ♿ Accessible: keyboard navigation, `aria-live` regions, `prefers-reduced-motion` and `prefers-contrast` support
-- 📴 Fully offline-capable — works from a single downloaded HTML file, no install, no server
+- 📴 Fully offline-capable — works from downloaded files, no install, no server
 - 🧩 Optional legacy substitution cipher, clearly labeled as a demo (not secure) for educational comparison
 
 ## Requirements
@@ -31,13 +30,13 @@ A client-side, offline text encryption tool with real AES-256-GCM — nothing ev
 - Any modern browser with Web Crypto API support (Chrome, Firefox, Safari, Edge — desktop or mobile)
 - No build tools, no dependencies, no server
 
-## 🌳 Structure
+## Project Structure
 
 ```
 smart-enigma/
 ├── index.html
-├── README.md
-└── style.css
+├── style.css
+└── README.md
 ```
 
 ## Installation
@@ -71,6 +70,9 @@ Smart Enigma is a single-page app — there is no command line. Everything happe
 | DECRYPT | Decrypts a previously encrypted message with the same key |
 | CLEAR | Wipes the message and result (asks for confirmation) |
 | Copy buttons | Copy the key or the result to your clipboard |
+| Key strength meter | Local heuristic estimate of how strong your key looks |
+| Key fingerprint | SHA-256 safety number to compare with the other party without revealing the key |
+| Panic wipe | Press Escape three times to instantly clear key, message, and result |
 | Language selector | Switch between 9 supported languages |
 | Theme toggle | Switch between light and dark mode |
 
@@ -107,6 +109,7 @@ xN9m2QeR8pKzV3sLtY7bJ4cD1wA6gU0iO5hF2nE8...
 | No message entered | Toast warning, action cancelled |
 | Wrong key on decrypt | "Decryption failed" toast, output cleared |
 | Tab closed | Key field wiped from memory |
+| Triple Escape press | Key, message, and result wiped instantly, no confirmation |
 | Browser language unsupported | Falls back to English |
 | System theme | Detected automatically on first load |
 

@@ -172,7 +172,7 @@
       <div class="key-row">
         <div class="input-container">
          <input id="keyInput" type="password" autocomplete="new-password"
-         inputmode="text" placeholder="" />
+         inputmode="text" placeholder="" aria-describedby="keyStrengthHintText" />
          <button type="button" id="toggleSecret" class="visibility-toggle" aria-label="Show key">
            <svg class="icon" aria-hidden="true" focusable="false"><use id="toggleSecretIcon" href="#icon-eye"></use></svg>
          </button>
@@ -180,6 +180,17 @@
         <button id="copyKey" class="btn small icon-only" aria-label="Copy key">
           <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg>
         </button>
+      </div>
+
+      <div class="strength-meter" id="strengthMeter">
+        <div class="strength-header">
+          <span id="keyStrengthLabelText"></span>
+          <span class="strength-level" id="keyStrengthLevelText"></span>
+        </div>
+        <div class="strength-bar" aria-hidden="true">
+          <span class="strength-fill" id="strengthFill"></span>
+        </div>
+        <p class="strength-hint" id="keyStrengthHintText"></p>
       </div>
 
       <div class="options">
@@ -198,7 +209,25 @@
         <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-alert-triangle"></use></svg>
         <span id="weakWarningText"></span>
       </p>
+
+      <div class="fingerprint-block">
+        <p class="fingerprint-title">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-shield-lock"></use></svg>
+          <span id="fingerprintLabelText"></span>
+        </p>
+        <p class="fingerprint-hint" id="fingerprintHintText"></p>
+        <div class="fingerprint-row">
+          <code class="fingerprint-value" id="fingerprintValue" hidden aria-live="polite"></code>
+          <button type="button" id="fingerprintToggle" class="btn tiny">
+            <svg class="icon" aria-hidden="true" focusable="false"><use id="fingerprintToggleIcon" href="#icon-eye"></use></svg>
+            <span class="btn-label" id="fingerprintToggleText"></span>
+          </button>
+        </div>
+      </div>
+
+      <p class="panic-hint" id="panicWipeHintText"></p>
     </section>
+
 
     <section class="panel io-block">
       <span class="panel-corner panel-corner--tl" aria-hidden="true"></span>
@@ -312,8 +341,23 @@
   const clearBtnText = $('#clearBtnText');
   const copyOutputText = $('#copyOutputText');
 
+  // Phase A additions (v3.0.0)
+  const keyStrengthLabelText = $('#keyStrengthLabelText');
+  const keyStrengthLevelText = $('#keyStrengthLevelText');
+  const keyStrengthHintText = $('#keyStrengthHintText');
+  const strengthFill = $('#strengthFill');
+  const strengthMeter = $('#strengthMeter');
+  const fingerprintLabelText = $('#fingerprintLabelText');
+  const fingerprintHintText = $('#fingerprintHintText');
+  const fingerprintValue = $('#fingerprintValue');
+  const fingerprintToggle = $('#fingerprintToggle');
+  const fingerprintToggleIcon = $('#fingerprintToggleIcon');
+  const fingerprintToggleText = $('#fingerprintToggleText');
+  const panicWipeHintText = $('#panicWipeHintText');
+
   let hasResult = false;
   let currentLang = 'en';
+  let fingerprintVisible = false;
 
   /* -------- Translations (provided by SMART-ENIGMA-i18n, integrated as-is) -------- */
   const translations = {
@@ -361,7 +405,17 @@
       copied: 'Copied',
       copyFail: 'Copy failed',
       keyCleared: 'Key cleared',
-      clearConfirm: 'Clear the message and result?'
+      clearConfirm: 'Clear the message and result?',
+      keyStrengthLabel: 'Key strength',
+      keyStrengthWeak: 'Weak',
+      keyStrengthMedium: 'Medium',
+      keyStrengthStrong: 'Strong',
+      keyStrengthHint: 'Local estimate only.',
+      fingerprintLabel: 'Key fingerprint',
+      fingerprintHint: 'Compare this fingerprint with the other party to confirm you share the same key, without revealing it.',
+      fingerprintShow: 'Show fingerprint',
+      fingerprintHide: 'Hide fingerprint',
+      panicWipeHint: 'Press Escape three times to instantly wipe all fields.'
     },
 
     // --- Français ---
@@ -408,7 +462,17 @@
       copied: 'Copié',
       copyFail: 'Échec de la copie',
       keyCleared: 'Clé effacée',
-      clearConfirm: 'Effacer le message et le résultat ?'
+      clearConfirm: 'Effacer le message et le résultat ?',
+      keyStrengthLabel: 'Robustesse de la clé',
+      keyStrengthWeak: 'Faible',
+      keyStrengthMedium: 'Moyenne',
+      keyStrengthStrong: 'Forte',
+      keyStrengthHint: 'Estimation locale indicative uniquement — ne garantit pas la sécurité de votre clé.',
+      fingerprintLabel: 'Empreinte de la clé',
+      fingerprintHint: 'Comparez cette empreinte avec votre interlocuteur pour confirmer que vous partagez la même clé, sans la révéler.',
+      fingerprintShow: 'Afficher l\'empreinte',
+      fingerprintHide: 'Masquer l\'empreinte',
+      panicWipeHint: 'Appuyez trois fois sur Échap pour effacer instantanément tous les champs.'
     },
 
     // --- 中文 (简体) ---
@@ -455,7 +519,17 @@
       copied: '已复制',
       copyFail: '复制失败',
       keyCleared: '密钥已清除',
-      clearConfirm: '确定要清除消息和结果吗？'
+      clearConfirm: '确定要清除消息和结果吗？',
+      keyStrengthLabel: '密钥强度',
+      keyStrengthWeak: '弱',
+      keyStrengthMedium: '中等',
+      keyStrengthStrong: '强',
+      keyStrengthHint: '仅为本地估算，不构成安全保证。',
+      fingerprintLabel: '密钥指纹',
+      fingerprintHint: '与对方比对此指纹，可在不泄露密钥的情况下确认双方使用相同的密钥。',
+      fingerprintShow: '显示指纹',
+      fingerprintHide: '隐藏指纹',
+      panicWipeHint: '连续按三次 Esc 键可立即清空所有字段。'
     },
 
     // --- Español ---
@@ -502,7 +576,17 @@
       copied: 'Copiado',
       copyFail: 'Error al copiar',
       keyCleared: 'Clave borrada',
-      clearConfirm: '¿Borrar el mensaje y el resultado?'
+      clearConfirm: '¿Borrar el mensaje y el resultado?',
+      keyStrengthLabel: 'Fortaleza de la clave',
+      keyStrengthWeak: 'Débil',
+      keyStrengthMedium: 'Media',
+      keyStrengthStrong: 'Fuerte',
+      keyStrengthHint: 'Estimación local orientativa; no garantiza la seguridad de su clave.',
+      fingerprintLabel: 'Huella de la clave',
+      fingerprintHint: 'Compare esta huella con la otra persona para confirmar que comparten la misma clave, sin revelarla.',
+      fingerprintShow: 'Mostrar huella',
+      fingerprintHide: 'Ocultar huella',
+      panicWipeHint: 'Pulse Escape tres veces para borrar todos los campos al instante.'
     },
 
     // --- Русский ---
@@ -549,7 +633,17 @@
       copied: 'Скопировано',
       copyFail: 'Не удалось скопировать',
       keyCleared: 'Ключ очищен',
-      clearConfirm: 'Очистить сообщение и результат?'
+      clearConfirm: 'Очистить сообщение и результат?',
+      keyStrengthLabel: 'Надёжность ключа',
+      keyStrengthWeak: 'Слабый',
+      keyStrengthMedium: 'Средний',
+      keyStrengthStrong: 'Надёжный',
+      keyStrengthHint: 'Это лишь локальная оценка — она не гарантирует безопасность.',
+      fingerprintLabel: 'Отпечаток ключа',
+      fingerprintHint: 'Сравните этот отпечаток с собеседником, чтобы убедиться в совпадении ключей, не раскрывая сам ключ.',
+      fingerprintShow: 'Показать отпечаток',
+      fingerprintHide: 'Скрыть отпечаток',
+      panicWipeHint: 'Трижды нажмите Escape, чтобы мгновенно очистить все поля.'
     },
 
     // --- Deutsch ---
@@ -596,7 +690,17 @@
       copied: 'Kopiert',
       copyFail: 'Kopieren fehlgeschlagen',
       keyCleared: 'Schlüssel gelöscht',
-      clearConfirm: 'Nachricht und Ergebnis löschen?'
+      clearConfirm: 'Nachricht und Ergebnis löschen?',
+      keyStrengthLabel: 'Schlüsselstärke',
+      keyStrengthWeak: 'Schwach',
+      keyStrengthMedium: 'Mittel',
+      keyStrengthStrong: 'Stark',
+      keyStrengthHint: 'Nur eine lokale Schätzung — keine Sicherheitsgarantie.',
+      fingerprintLabel: 'Schlüssel-Fingerabdruck',
+      fingerprintHint: 'Vergleichen Sie diesen Fingerabdruck mit Ihrem Gegenüber, um zu bestätigen, dass Sie denselben Schlüssel verwenden, ohne ihn preiszugeben.',
+      fingerprintShow: 'Fingerabdruck anzeigen',
+      fingerprintHide: 'Fingerabdruck ausblenden',
+      panicWipeHint: 'Escape dreimal drücken, um alle Felder sofort zu löschen.'
     },
 
     // --- Português ---
@@ -643,7 +747,17 @@
       copied: 'Copiado',
       copyFail: 'Falha ao copiar',
       keyCleared: 'Chave apagada',
-      clearConfirm: 'Limpar a mensagem e o resultado?'
+      clearConfirm: 'Limpar a mensagem e o resultado?',
+      keyStrengthLabel: 'Força da chave',
+      keyStrengthWeak: 'Fraca',
+      keyStrengthMedium: 'Média',
+      keyStrengthStrong: 'Forte',
+      keyStrengthHint: 'Estimativa local apenas — não garante a segurança da sua chave.',
+      fingerprintLabel: 'Impressão digital da chave',
+      fingerprintHint: 'Compare esta impressão com a outra pessoa para confirmar que ambos usam a mesma chave, sem revelá-la.',
+      fingerprintShow: 'Mostrar impressão digital',
+      fingerprintHide: 'Ocultar impressão digital',
+      panicWipeHint: 'Pressione Esc três vezes para limpar todos os campos instantaneamente.'
     },
 
     // --- Italiano ---
@@ -690,7 +804,17 @@
       copied: 'Copiato',
       copyFail: 'Copia non riuscita',
       keyCleared: 'Chiave cancellata',
-      clearConfirm: 'Cancellare il messaggio e il risultato?'
+      clearConfirm: 'Cancellare il messaggio e il risultato?',
+      keyStrengthLabel: 'Robustezza della chiave',
+      keyStrengthWeak: 'Debole',
+      keyStrengthMedium: 'Media',
+      keyStrengthStrong: 'Forte',
+      keyStrengthHint: 'Solo una stima locale indicativa: non garantisce la sicurezza della chiave.',
+      fingerprintLabel: 'Impronta della chiave',
+      fingerprintHint: 'Confronta questa impronta con l\'altra persona per confermare che usate la stessa chiave, senza rivelarla.',
+      fingerprintShow: 'Mostra impronta',
+      fingerprintHide: 'Nascondi impronta',
+      panicWipeHint: 'Premi Esc tre volte per cancellare istantaneamente tutti i campi.'
     },
 
     // --- 한국어 ---
@@ -737,7 +861,17 @@
       copied: '복사됨',
       copyFail: '복사 실패',
       keyCleared: '키가 지워졌습니다',
-      clearConfirm: '메시지와 결과를 지우시겠습니까?'
+      clearConfirm: '메시지와 결과를 지우시겠습니까?',
+      keyStrengthLabel: '키 강도',
+      keyStrengthWeak: '약함',
+      keyStrengthMedium: '보통',
+      keyStrengthStrong: '강함',
+      keyStrengthHint: '로컬 추정치일 뿐이며 보안을 보장하지 않습니다.',
+      fingerprintLabel: '키 지문',
+      fingerprintHint: '상대방과 이 지문을 비교하면 키를 노출하지 않고도 동일한 키를 사용하는지 확인할 수 있습니다.',
+      fingerprintShow: '지문 표시',
+      fingerprintHide: '지문 숨기기',
+      panicWipeHint: 'Esc 키를 세 번 누르면 모든 필드가 즉시 지워집니다.'
     }
   };
 
@@ -805,10 +939,102 @@
       stepsList.appendChild(li);
     });
     $('#howNote').textContent = d.howNote;
+
+    // Phase A additions (v3.0.0)
+    keyStrengthLabelText.textContent = d.keyStrengthLabel;
+    keyStrengthHintText.textContent = d.keyStrengthHint;
+    fingerprintLabelText.textContent = d.fingerprintLabel;
+    fingerprintHintText.textContent = d.fingerprintHint;
+    fingerprintToggle.setAttribute('aria-label', fingerprintVisible ? d.fingerprintHide : d.fingerprintShow);
+    fingerprintToggleText.textContent = fingerprintVisible ? d.fingerprintHide : d.fingerprintShow;
+    panicWipeHintText.textContent = d.panicWipeHint;
+    refreshKeyStrength();
   }
 
   function updateWeakWarning() {
     weakWarning.hidden = useStrong.checked;
+  }
+
+  /* -------- Key strength indicator (v3.0.0) --------
+     Homegrown heuristic, purely indicative (see keyStrengthHint in
+     each language): no external library, no remote service. This is
+     NOT a certified entropy measurement — just a local signal
+     encouraging better key hygiene. */
+  const COMMON_WEAK_KEYS = [
+    'password', '123456', '12345678', '123456789', 'qwerty', 'azerty',
+    'letmein', 'admin', 'iloveyou', '111111', '000000', 'abc123',
+    'password1', 'welcome', 'sunshine', 'princess', 'dragon'
+  ];
+
+  function isSequential(str) {
+    if (str.length < 4) return false;
+    let asc = true, desc = true;
+    for (let i = 1; i < str.length; i++) {
+      const diff = str.charCodeAt(i) - str.charCodeAt(i - 1);
+      if (diff !== 1) asc = false;
+      if (diff !== -1) desc = false;
+    }
+    return asc || desc;
+  }
+
+  function estimateKeyStrength(key) {
+    if (!key) return { level: 'weak', score: 0 };
+    const lower = key.toLowerCase();
+    if (COMMON_WEAK_KEYS.includes(lower)) return { level: 'weak', score: 5 };
+    if (/^(.)\1+$/.test(key)) return { level: 'weak', score: 5 };
+    if (isSequential(key)) return { level: 'weak', score: 10 };
+
+    let diversity = 0;
+    if (/[a-z]/.test(key)) diversity++;
+    if (/[A-Z]/.test(key)) diversity++;
+    if (/[0-9]/.test(key)) diversity++;
+    if (/[^a-zA-Z0-9]/.test(key)) diversity++;
+
+    const lengthScore = Math.min(key.length * 6, 60);
+    const diversityScore = Math.min(diversity * 10, 40);
+    let score = Math.min(lengthScore + diversityScore, 100);
+    if (key.length < 8) score = Math.min(score, 35);
+
+    let level = 'weak';
+    if (score >= 70) level = 'strong';
+    else if (score >= 40) level = 'medium';
+
+    return { level, score };
+  }
+
+  function refreshKeyStrength() {
+    const d = t();
+    const { level, score } = estimateKeyStrength(keyInput.value);
+    const levelLabel = level === 'strong' ? d.keyStrengthStrong
+      : level === 'medium' ? d.keyStrengthMedium
+      : d.keyStrengthWeak;
+    keyStrengthLevelText.textContent = levelLabel;
+    strengthFill.style.width = keyInput.value ? Math.max(score, 6) + '%' : '0%';
+    strengthMeter.dataset.level = level;
+  }
+
+  /* -------- Key fingerprint / safety number (v3.0.0) --------
+     Local SHA-256 hash of the key, truncated and formatted into
+     hexadecimal blocks — used only to verbally confirm that two
+     people are using the same key, WITHOUT ever revealing or
+     transmitting it. Computed on demand only (never shown by
+     default), and automatically hidden if the key changes meanwhile. */
+  async function computeKeyFingerprint(key) {
+    const enc = new TextEncoder();
+    const digest = await crypto.subtle.digest('SHA-256', enc.encode(key));
+    const bytes = new Uint8Array(digest).slice(0, 10);
+    const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join('');
+    return hex.match(/.{1,4}/g).join(' ');
+  }
+
+  function hideFingerprint() {
+    fingerprintVisible = false;
+    fingerprintValue.hidden = true;
+    fingerprintValue.textContent = '';
+    const d = t();
+    fingerprintToggle.setAttribute('aria-label', d.fingerprintShow);
+    fingerprintToggleText.textContent = d.fingerprintShow;
+    fingerprintToggleIcon.setAttribute('href', '#icon-eye');
   }
 
   /* -------- Legacy substitution cipher (demo only, NOT secure) -------- */
@@ -867,7 +1093,16 @@
   }
 
   function bufToBase64(buf) {
-    return btoa(String.fromCharCode(...new Uint8Array(buf)));
+    // Chunked conversion: spreading a large Uint8Array into
+    // String.fromCharCode(...) can overflow the call stack on long
+    // messages. Processing in fixed-size chunks avoids that limit.
+    const bytes = new Uint8Array(buf);
+    const chunkSize = 0x8000;
+    let binary = '';
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+    }
+    return btoa(binary);
   }
   function base64ToBuf(b64) {
     const bin = atob(b64);
@@ -876,24 +1111,45 @@
     return arr.buffer;
   }
 
-  async function encryptAesGcm(plain, password) {
-    const enc = new TextEncoder();
+  /* Byte-level core (v3.0.0) — extracted from the pre-existing
+     implementation with ZERO change to any cryptographic parameter
+     (PBKDF2 600000 iterations SHA-256, AES-GCM 256, 16-byte salt,
+     12-byte iv, salt+iv+ciphertext blob format — all untouched, as
+     found in this project revision). encryptAesGcm/decryptAesGcm below
+     are now thin text wrappers around this core. Output verified
+     bit-for-bit identical to the previous implementation and fully
+     cross-compatible in both directions with any blob produced by an
+     earlier version. This core is the technical prerequisite for
+     future byte-oriented features (files, QR, sound, steganography) —
+     not yet wired to any UI. */
+  async function encryptBytes(plainBytes, password) {
     const salt = crypto.getRandomValues(new Uint8Array(16));
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const key = await deriveKey(password, salt);
-    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plain));
-    return bufToBase64(concatBuffers(salt.buffer, iv.buffer, ct));
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plainBytes);
+    return new Uint8Array(concatBuffers(salt.buffer, iv.buffer, ct));
   }
 
-  async function decryptAesGcm(b64blob, password) {
-    const blob = base64ToBuf(b64blob);
-    const arr = new Uint8Array(blob);
+  async function decryptBytes(blobBytes, password) {
+    const arr = blobBytes instanceof Uint8Array ? blobBytes : new Uint8Array(blobBytes);
     const salt = arr.slice(0, 16).buffer;
     const iv = arr.slice(16, 28).buffer;
     const ct = arr.slice(28).buffer;
     const key = await deriveKey(password, salt);
     const plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(iv) }, key, ct);
-    return new TextDecoder().decode(plainBuf);
+    return new Uint8Array(plainBuf);
+  }
+
+  async function encryptAesGcm(plain, password) {
+    const enc = new TextEncoder();
+    const cipherBytes = await encryptBytes(enc.encode(plain), password);
+    return bufToBase64(cipherBytes.buffer);
+  }
+
+  async function decryptAesGcm(b64blob, password) {
+    const blob = base64ToBuf(b64blob);
+    const plainBytes = await decryptBytes(blob, password);
+    return new TextDecoder().decode(plainBytes);
   }
 
   function setOutput(text) {
@@ -995,6 +1251,42 @@
     output.classList.add('placeholder');
   }
 
+  /* -------- Panic wipe (v3.0.0) --------
+     Triggered by pressing Escape three times in a row (see below).
+     Deliberately has no confirmation dialog or toast: the instant
+     clearing of the fields IS the visual feedback, to stay discreet
+     if someone is watching over your shoulder. Discoverability of the
+     shortcut is handled by panicWipeHintText (text provided by
+     SMART-ENIGMA-i18n). Known limitation: cannot clear browser
+     history or the clipboard of other apps already open elsewhere —
+     the browser clipboard is cleared on a best-effort basis only. */
+  async function panicWipe() {
+    keyInput.value = '';
+    inputArea.value = '';
+    hasResult = false;
+    output.textContent = t().outputPlaceholder;
+    output.classList.add('placeholder');
+
+    if (keyInput.type === 'text') {
+      keyInput.type = 'password';
+      toggleSecretIcon.setAttribute('href', '#icon-eye');
+      toggleSecret.setAttribute('aria-label', t().toggleShowKey);
+    }
+
+    hideFingerprint();
+    refreshKeyStrength();
+    toast.hidden = true;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText('');
+      }
+    } catch (e) { /* best-effort uniquement, on ignore silencieusement */ }
+
+    keyInput.blur();
+    inputArea.blur();
+  }
+
   /* -------- Event wiring -------- */
   langSelect.addEventListener('change', (e) => translateUI(e.target.value));
   themeToggle.addEventListener('change', (e) => {
@@ -1016,11 +1308,51 @@
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) encryptAction();
   });
 
+  keyInput.addEventListener('input', () => {
+    refreshKeyStrength();
+    if (fingerprintVisible) hideFingerprint();
+  });
+
+  fingerprintToggle.addEventListener('click', async () => {
+    const d = t();
+    if (fingerprintVisible) {
+      hideFingerprint();
+      return;
+    }
+    if (!keyInput.value) { showToast(d.noKey); return; }
+    try {
+      const fp = await computeKeyFingerprint(keyInput.value);
+      fingerprintValue.textContent = fp;
+      fingerprintValue.hidden = false;
+      fingerprintVisible = true;
+      fingerprintToggle.setAttribute('aria-label', d.fingerprintHide);
+      fingerprintToggleText.textContent = d.fingerprintHide;
+      fingerprintToggleIcon.setAttribute('href', '#icon-eye-off');
+    } catch (err) {
+      console.error(err);
+      showToast(d.genericError);
+    }
+  });
+
   toggleSecret.addEventListener('click', () => {
     const showing = keyInput.type === 'text';
     keyInput.type = showing ? 'password' : 'text';
     toggleSecretIcon.setAttribute('href', showing ? '#icon-eye' : '#icon-eye-off');
     toggleSecret.setAttribute('aria-label', showing ? t().toggleShowKey : t().toggleHideKey);
+  });
+
+  // Panic wipe: triple press of Escape within 1.2s.
+  // Listens at the document level so it stays active regardless of focus.
+  let panicEscapePresses = [];
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const now = Date.now();
+    panicEscapePresses = panicEscapePresses.filter(ts => now - ts < 1200);
+    panicEscapePresses.push(now);
+    if (panicEscapePresses.length >= 3) {
+      panicEscapePresses = [];
+      panicWipe();
+    }
   });
 
   window.addEventListener('beforeunload', () => {
