@@ -1,0 +1,1222 @@
+/* ==========================================================================
+   SMART ENIGMA — style.css
+   Art direction "Pro-Max": digital vault / Enigma-machine spirit.
+   Zero external dependencies, zero font/CDN, 100% inline & offline.
+   Multilingual font stack (9 languages) provided by SMART-ENIGMA-i18n.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   "Vault" palette: ink/parchment in light mode, obsidian/brass/cyan in dark mode.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand accents — brass (cipher-machine spirit) + cyan (digital encryption) */
+  --brass: #a9762c;
+  --brass-hover: #8f6222;
+  --brass-soft: rgb(169 118 44 / 0.14);
+  --cipher: #0f7a72;
+  --cipher-hover: #0b5f59;
+  --cipher-soft: rgb(15 122 114 / 0.14);
+  --danger-color: #b3261e;
+  --danger-soft: rgb(179 38 30 / 0.12);
+
+  /* Surfaces — ivory parchment */
+  --bg-color: #f6f1e4;
+  --bg-secondary: #efe7d3;
+  --bg-tertiary: #e7dcc0;
+  --surface: #fffdf8;
+  --surface-hover: #f6efdd;
+
+  /* Text — ink */
+  --text-primary: #1c1a15;
+  --text-secondary: #5c5642;
+  --text-muted: #8c8468;
+
+  /* Borders */
+  --border-color: #ddd0aa;
+  --border-hover: #c7b787;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(28 26 21 / 0.06);
+  --shadow-md: 0 6px 16px -4px rgb(28 26 21 / 0.14), 0 2px 6px -2px rgb(28 26 21 / 0.08);
+  --shadow-lg: 0 20px 40px -12px rgb(28 26 21 / 0.22), 0 8px 16px -8px rgb(28 26 21 / 0.14);
+  --shadow-glow: 0 0 0 3px var(--cipher-soft);
+  --shadow-glow-brass: 0 0 0 3px var(--brass-soft);
+
+  /* Radii */
+  --radius-sm: 0.4rem;
+  --radius-md: 0.65rem;
+  --radius-lg: 0.9rem;
+  --radius-xl: 1.25rem;
+  --radius-pill: 999px;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Typography — multilingual stack (Latin, Cyrillic, simplified CJK, Hangul)
+     provided by SMART-ENIGMA-i18n (see NOTES_TYPOGRAPHY.md), no CDN. */
+  --font-family: -apple-system, "Segoe UI", Roboto, "PingFang SC",
+    "Apple SD Gothic Neo", "Microsoft YaHei", "Malgun Gothic",
+    "Noto Sans SC", "Noto Sans KR", Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas,
+    "PingFang SC", "Apple SD Gothic Neo", "Microsoft YaHei", "Malgun Gothic",
+    "Noto Sans SC", "Noto Sans KR", "Courier New", monospace;
+
+  /* Transitions */
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Icons */
+  --icon-size: 1.15em;
+
+  color-scheme: light;
+}
+
+/* Dark mode — "obsidian vault": deep background, warm brass, cyan glow */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --brass: #d4af6a;
+  --brass-hover: #e6c383;
+  --brass-soft: rgb(212 175 106 / 0.16);
+  --cipher: #22d3ee;
+  --cipher-hover: #67e3f7;
+  --cipher-soft: rgb(34 211 238 / 0.16);
+  --danger-color: #ff6b6f;
+  --danger-soft: rgb(255 107 111 / 0.14);
+
+  --bg-color: #090b11;
+  --bg-secondary: #10141d;
+  --bg-tertiary: #171e2b;
+  --surface: #12161f;
+  --surface-hover: #1b2230;
+
+  --text-primary: #eef1f6;
+  --text-secondary: #a9b1c4;
+  --text-muted: #6b7386;
+
+  --border-color: #232b3b;
+  --border-hover: #313c53;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 6px 16px -4px rgb(0 0 0 / 0.5), 0 2px 6px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 20px 45px -12px rgb(0 0 0 / 0.65), 0 8px 20px -8px rgb(0 0 0 / 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET & BASE
+   -------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  position: relative;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+  overflow-x: hidden;
+}
+
+svg.icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: -0.18em;
+}
+
+/* FIX v2.0.1: several components (.warning, .toast) declare their own
+   `display` (flex) to align icon + text. An author rule on `display`
+   wins over the browser's default stylesheet rule `[hidden] { display: none }`
+   even at equal specificity, which was silently neutralizing the `hidden`
+   attribute set by JS (e.g. the "Demo mode" warning stayed visible even
+   with Max-Enigma enabled). This rule restores `[hidden]` as the single
+   source of truth for every element in the project, regardless of any
+   `display` declared elsewhere. */
+[hidden] {
+  display: none !important;
+}
+
+/* Icon sprite — never displayed directly */
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   3. ACCESSIBILITY
+   -------------------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cipher);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   4. DECORATIVE AMBIENT BACKGROUND
+   Soft glows + "circuit" grid — pure CSS, no external image.
+   Always aria-hidden on the HTML side: 100% decorative content.
+   -------------------------------------------------------------------------- */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient-grid {
+  position: absolute;
+  inset: -2px;
+  background-image:
+    linear-gradient(var(--border-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: 0.16;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 90%);
+}
+
+[data-theme="dark"] .ambient-grid {
+  opacity: 0.22;
+}
+
+.ambient-glow {
+  position: absolute;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.22;
+  will-change: transform;
+}
+
+.ambient-glow--brass {
+  top: -18vmax;
+  left: -12vmax;
+  background: radial-gradient(circle, var(--brass) 0%, transparent 70%);
+  animation: driftA 34s ease-in-out infinite alternate;
+}
+
+.ambient-glow--cipher {
+  bottom: -20vmax;
+  right: -14vmax;
+  background: radial-gradient(circle, var(--cipher) 0%, transparent 70%);
+  animation: driftB 28s ease-in-out infinite alternate;
+}
+
+@keyframes driftA {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(4vmax, 3vmax) scale(1.08); }
+}
+
+@keyframes driftB {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-3vmax, -4vmax) scale(1.1); }
+}
+
+/* --------------------------------------------------------------------------
+   5. HEADER / BRAND / DECORATIVE ROTOR
+   -------------------------------------------------------------------------- */
+.topbar {
+  background: rgb(255 253 248 / 0.72);
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+}
+
+[data-theme="dark"] .topbar {
+  background: rgb(9 11 17 / 0.68);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.brand-mark {
+  position: relative;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brass);
+}
+
+.brand-mark .icon {
+  width: 1.55rem;
+  height: 1.55rem;
+  z-index: 2;
+  filter: drop-shadow(0 0 6px var(--brass-soft));
+}
+
+.brand-rotor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--cipher);
+  opacity: 0.55;
+  animation: rotorSpin 50s linear infinite;
+}
+
+.brand-rotor .rotor-ring--inner {
+  color: var(--brass);
+  opacity: 0.8;
+  animation: rotorSpinReverse 32s linear infinite;
+  transform-origin: 60px 60px;
+}
+
+@keyframes rotorSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotorSpinReverse {
+  to { transform: rotate(-360deg); }
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.brand-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  background: linear-gradient(120deg, var(--brass) 0%, var(--cipher) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-sub {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* --------------------------------------------------------------------------
+   6. LANGUAGE SELECTOR (9 languages) & THEME SWITCH
+   -------------------------------------------------------------------------- */
+.lang-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 0 0.55rem 0 0.7rem;
+  height: 2.5rem;
+  transition: var(--transition-fast);
+  color: var(--text-secondary);
+}
+
+.lang-chip:hover {
+  border-color: var(--border-hover);
+}
+
+.lang-chip:focus-within {
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+.lang-chip .icon-globe {
+  color: var(--cipher);
+}
+
+.lang-chip .icon-chevron {
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+
+#langSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  max-width: 8.5rem;
+  padding: 0.5rem 0.15rem;
+}
+
+#langSelect:focus {
+  outline: none;
+}
+
+/* The native <select> remains the source of truth for accessibility:
+   no custom combobox is re-created, just a visual wrapper. */
+#langSelect option {
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+}
+
+.theme-switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border-color);
+  background: var(--surface);
+  transition: var(--transition-fast);
+  color: var(--brass);
+}
+
+.theme-switch:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.theme-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-switch:focus-within {
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+.theme-switch .icon {
+  position: absolute;
+  transition: var(--transition-normal);
+}
+
+.theme-switch .icon-sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+  color: var(--brass);
+}
+
+.theme-switch .icon-moon {
+  opacity: 0;
+  transform: rotate(-60deg) scale(0.5);
+  color: var(--cipher);
+}
+
+.theme-switch input:checked ~ .icon-sun {
+  opacity: 0;
+  transform: rotate(60deg) scale(0.5);
+}
+
+.theme-switch input:checked ~ .icon-moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* --------------------------------------------------------------------------
+   7. MAIN CONTAINER
+   -------------------------------------------------------------------------- */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+  animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+section {
+  margin-bottom: var(--space-2xl);
+}
+
+/* --------------------------------------------------------------------------
+   8. SECRET KEY PANEL — "vault" aesthetic
+   -------------------------------------------------------------------------- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brass), var(--cipher));
+}
+
+/* "Reticle" corners — a nod to security/precision */
+.panel-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-hover);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.panel-corner--tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
+.panel-corner--tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 4px 0 0; }
+.panel-corner--bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 4px; }
+.panel-corner--br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
+
+.panel-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+  font-size: 1.05rem;
+}
+
+.panel-label .icon {
+  color: var(--brass);
+}
+
+.key-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+#keyInput {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  padding-right: 2.9rem;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  transition: var(--transition-fast);
+  width: 100%;
+}
+
+#keyInput::placeholder {
+  color: var(--text-muted);
+  letter-spacing: normal;
+  font-family: var(--font-family);
+}
+
+#keyInput:hover {
+  border-color: var(--border-hover);
+}
+
+#keyInput:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+  background: var(--surface);
+}
+
+.visibility-toggle {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  display: flex;
+  transition: var(--transition-fast);
+}
+
+.visibility-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--cipher);
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.strong-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* "Rotor" switch for Max-Enigma, built on the existing checkbox */
+.switch {
+  position: relative;
+  display: inline-flex;
+  width: 2.6rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+}
+
+.switch-track::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-fast);
+}
+
+.switch input:checked ~ .switch-track {
+  background: var(--cipher);
+  border-color: var(--cipher);
+}
+
+.switch input:checked ~ .switch-track::before {
+  transform: translateX(1.1rem);
+  background: #fff;
+}
+
+.switch input:focus-visible ~ .switch-track {
+  box-shadow: var(--shadow-glow);
+}
+
+.btn.tiny.icon-only {
+  padding: var(--space-xs);
+  min-height: 28px;
+  width: 28px;
+}
+
+.warning {
+  margin-top: var(--space-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--brass-soft);
+  border: 1px solid var(--brass);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.warning .icon {
+  color: var(--brass);
+  margin-top: 0.15em;
+}
+
+/* --------------------------------------------------------------------------
+   9. MESSAGE PANEL / ACTIONS
+   -------------------------------------------------------------------------- */
+#inputArea {
+  width: 100%;
+  min-height: 190px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  font-size: 1rem;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: var(--transition-fast);
+  margin-bottom: var(--space-lg);
+}
+
+#inputArea:hover {
+  border-color: var(--border-hover);
+}
+
+#inputArea:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+  background: var(--surface);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.actions .btn {
+  flex: 1 1 9rem;
+}
+
+/* --------------------------------------------------------------------------
+   10. BUTTONS
+   -------------------------------------------------------------------------- */
+.btn {
+  background: var(--surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  font-size: clamp(0.82rem, 1.6vw, 0.98rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  white-space: normal;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 0.18) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+
+.btn:hover::before {
+  transform: translateX(120%);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn .icon {
+  flex-shrink: 0;
+}
+
+.btn.primary,
+#decryptBtn {
+  background: linear-gradient(135deg, var(--cipher), var(--cipher-hover));
+  color: #fff;
+  border-color: var(--cipher);
+}
+
+.btn.primary:hover,
+#decryptBtn:hover {
+  filter: brightness(1.08);
+}
+
+#decryptBtn {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--brass);
+}
+
+#decryptBtn:hover {
+  background: var(--brass-soft);
+}
+
+.btn.outline {
+  background: transparent;
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.btn.outline:hover {
+  background: var(--danger-color);
+  color: #fff;
+}
+
+.btn.small {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.85rem;
+  min-height: 38px;
+}
+
+.btn.tiny {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.75rem;
+  min-height: 30px;
+  border-radius: var(--radius-sm);
+}
+
+.btn:disabled::after {
+  content: '';
+  width: 15px;
+  height: 15px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   11. OUTPUT / RESULT TERMINAL
+   -------------------------------------------------------------------------- */
+h3.result-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+h3.result-title .icon {
+  color: var(--cipher);
+}
+
+#output {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 110px;
+  margin-bottom: var(--space-md);
+  position: relative;
+  transition: var(--transition-fast);
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgb(0 0 0 / 0.015) 0px,
+    rgb(0 0 0 / 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+[data-theme="dark"] #output {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgb(255 255 255 / 0.02) 0px,
+    rgb(255 255 255 / 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+#output:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+#output.placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  font-family: var(--font-family);
+}
+
+.output-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-label {
+  display: inline;
+}
+
+/* --------------------------------------------------------------------------
+   12. INFO SECTIONS
+   -------------------------------------------------------------------------- */
+.info {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  border-left: 3px solid var(--brass);
+}
+
+.info-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.info-title .icon {
+  color: var(--brass);
+}
+
+.info p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  line-height: 1.7;
+}
+
+.info ol {
+  list-style: none;
+  counter-reset: step;
+  padding-left: 0;
+  color: var(--text-secondary);
+}
+
+.info ol li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 2.4rem;
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+  min-height: 1.7rem;
+  display: flex;
+  align-items: center;
+}
+
+.info ol li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--cipher-soft);
+  color: var(--cipher);
+  font-weight: 800;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+}
+
+/* --------------------------------------------------------------------------
+   13. DIVIDER & FOOTER
+   -------------------------------------------------------------------------- */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+  margin: var(--space-2xl) 0;
+}
+
+.footer {
+  text-align: center;
+  color: var(--text-muted);
+  padding: var(--space-xl) 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.footer a {
+  color: var(--cipher);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   14. TOAST
+   -------------------------------------------------------------------------- */
+.toast {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  background: var(--surface);
+  color: var(--text-primary);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--cipher);
+  z-index: 1000;
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 320px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.toast .icon {
+  color: var(--cipher);
+  flex-shrink: 0;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   15. RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-md);
+  }
+
+  .topbar {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .controls {
+    gap: var(--space-xs);
+  }
+
+  #langSelect {
+    max-width: 5.7rem;
+  }
+
+  .panel {
+    padding: var(--space-lg);
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+
+  .output-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .output-actions .btn {
+    width: 100%;
+  }
+
+  .options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .toast {
+    bottom: var(--space-md);
+    right: var(--space-md);
+    left: var(--space-md);
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-sm);
+  }
+
+  .brand-title {
+    font-size: 0.95rem;
+  }
+
+  .brand-mark {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .panel,
+  .info {
+    padding: var(--space-md);
+  }
+
+  #inputArea {
+    min-height: 150px;
+  }
+
+  .lang-chip {
+    padding: 0 0.4rem 0 0.55rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   16. MOTION, CONTRAST, PRINT
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ambient-glow,
+  .brand-rotor,
+  .brand-rotor .rotor-ring--inner {
+    animation: none !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #000000;
+    --text-secondary: var(--text-primary);
+  }
+
+  [data-theme="dark"] {
+    --border-color: #ffffff;
+  }
+
+  .ambient-grid,
+  .ambient-glow {
+    display: none;
+  }
+
+  .brand-title {
+    -webkit-text-fill-color: initial;
+    background: none;
+    color: var(--text-primary);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   17. SCROLLBAR (progressive enhancement, non-blocking)
+   -------------------------------------------------------------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: var(--radius-pill);
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}

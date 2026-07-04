@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Smart Enigma — a client-side, offline text encryption tool with AES-256-GCM. Nothing leaves your browser." />
+  <title>Smart Enigma — FuegoDev</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0d14'/%3E%3Cpath d='M50 12 L82 24 V48 C82 68 68 84 50 90 C32 84 18 68 18 48 V24 Z' fill='none' stroke='%23d4af6a' stroke-width='5'/%3E%3Crect x='38' y='46' width='24' height='20' rx='4' fill='none' stroke='%2322d3ee' stroke-width='5'/%3E%3Cpath d='M41 46 V38 a9 9 0 0 1 18 0 v8' fill='none' stroke='%2322d3ee' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient background, purely decorative (glows + grid), no content -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-glow ambient-glow--brass"></div>
+    <div class="ambient-glow ambient-glow--cipher"></div>
+    <div class="ambient-grid"></div>
+  </div>
+
+  <!-- Single SVG sprite: custom icon system, inherits currentColor -->
+  <svg class="icon-sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="icon-shield-lock" viewBox="0 0 24 24">
+        <path d="M12 2 L20 5.5 V11 C20 16.5 16.5 20.5 12 22 C7.5 20.5 4 16.5 4 11 V5.5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <rect x="9.3" y="11" width="5.4" height="4.6" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10.3 11 V9.4 a1.7 1.7 0 0 1 3.4 0 V11" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      </symbol>
+      <symbol id="icon-key" viewBox="0 0 24 24">
+        <circle cx="8" cy="15.5" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M10.3 13.2 L19 4.5 M16.4 7.1 L18.6 9.3 M14 9.5 L16 11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-lock-closed" viewBox="0 0 24 24">
+        <rect x="5" y="10.5" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M8 10.5 V7.5 a4 4 0 0 1 8 0 v3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="12" cy="15.3" r="1.3" fill="currentColor"/>
+        <path d="M12 16.6 V18.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-lock-open" viewBox="0 0 24 24">
+        <rect x="5" y="10.5" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M8 10.5 V7.5 a4 4 0 0 1 7.3 -2.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="12" cy="15.3" r="1.3" fill="currentColor"/>
+        <path d="M12 16.6 V18.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-eye" viewBox="0 0 24 24">
+        <path d="M2 12 C4.5 7 8 5 12 5 C16 5 19.5 7 22 12 C19.5 17 16 19 12 19 C8 19 4.5 17 2 12 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      </symbol>
+      <symbol id="icon-eye-off" viewBox="0 0 24 24">
+        <path d="M3.5 12 C6 7.5 9 5.5 12 5.5 C13.3 5.5 14.5 5.8 15.7 6.4 M18.6 8.4 C19.9 9.4 20.9 10.6 21.5 12 C19 16.5 16 18.5 12 18.5 C10.7 18.5 9.5 18.2 8.3 17.6 M6 10 C5 10.8 4.2 11.8 3.5 12 M9.9 9.9 A3 3 0 0 0 12 15 A3 3 0 0 0 14.1 14.1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 3 L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-copy" viewBox="0 0 24 24">
+        <rect x="8.5" y="8.5" width="11" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M15.5 8.5 V6.5 a1.5 1.5 0 0 0 -1.5 -1.5 H6 a1.5 1.5 0 0 0 -1.5 1.5 v9 a1.5 1.5 0 0 0 1.5 1.5 h2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      </symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-arrow-up" viewBox="0 0 24 24">
+        <path d="M12 19 V6 M6 11 L12 5 L18 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 2.5 V5 M12 19 V21.5 M4.2 4.2 L6 6 M18 18 L19.8 19.8 M2.5 12 H5 M19 12 H21.5 M4.2 19.8 L6 18 M18 6 L19.8 4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M20 14.5 A8.5 8.5 0 1 1 9.5 4 A6.8 6.8 0 0 0 20 14.5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-globe" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M3.5 12 H20.5 M12 3.5 C15 6.5 15 17.5 12 20.5 C9 17.5 9 6.5 12 3.5 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      </symbol>
+      <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+        <path d="M6 9 L12 15 L18 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-alert-triangle" viewBox="0 0 24 24">
+        <path d="M12 3.5 L21.5 20 H2.5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M12 9.5 V14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        <circle cx="12" cy="17" r="1" fill="currentColor"/>
+      </symbol>
+      <symbol id="icon-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M12 11 V16.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        <circle cx="12" cy="8" r="1" fill="currentColor"/>
+      </symbol>
+      <symbol id="icon-output" viewBox="0 0 24 24">
+        <rect x="3" y="4.5" width="18" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M7 9.5 L10.5 12 L7 14.5 M12.5 14.5 H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="M4.5 12.5 L9.5 17.5 L19.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <p class="brand">
+      <span class="brand-mark">
+        <svg class="brand-rotor" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <g class="rotor-ring rotor-ring--outer">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="1"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(0 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(30 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(60 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(90 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(120 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(150 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(180 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(210 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(240 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(270 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(300 60 60)"/>
+            <line x1="60" y1="8" x2="60" y2="15" stroke="currentColor" stroke-width="1.4" transform="rotate(330 60 60)"/>
+          </g>
+          <g class="rotor-ring rotor-ring--inner">
+            <circle cx="60" cy="60" r="34" fill="none" stroke="currentColor" stroke-width="1"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(0 60 60)"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(45 60 60)"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(90 60 60)"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(135 60 60)"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(180 60 60)"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(225 60 60)"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(270 60 60)"/>
+            <line x1="60" y1="26" x2="60" y2="32" stroke="currentColor" stroke-width="1.4" transform="rotate(315 60 60)"/>
+          </g>
+        </svg>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-shield-lock"></use></svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-title">SMART ENIGMA</span>
+        <span class="brand-sub">Cipher &amp; Secrecy</span>
+      </span>
+    </p>
+
+    <div class="controls">
+      <label class="sr-only" for="langSelect" id="langSelectLabel">Language</label>
+      <span class="lang-chip">
+        <svg class="icon icon-globe" aria-hidden="true" focusable="false"><use href="#icon-globe"></use></svg>
+        <select id="langSelect" aria-label="Choose language">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="zh">中文</option>
+          <option value="es">Español</option>
+          <option value="ru">Русский</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="it">Italiano</option>
+          <option value="ko">한국어</option>
+        </select>
+        <svg class="icon icon-chevron" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
+      </span>
+
+      <label class="theme-switch" id="themeLabel" title="Toggle theme">
+        <input id="themeToggle" type="checkbox" aria-label="Enable dark mode">
+        <svg class="icon icon-sun" aria-hidden="true" focusable="false"><use href="#icon-sun"></use></svg>
+        <svg class="icon icon-moon" aria-hidden="true" focusable="false"><use href="#icon-moon"></use></svg>
+      </label>
+    </div>
+  </header>
+
+  <main class="container" id="app">
+    <section class="panel key-block" aria-labelledby="keyLabel">
+      <span class="panel-corner panel-corner--tl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--tr" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--br" aria-hidden="true"></span>
+
+      <label id="keyLabel" for="keyInput" class="panel-label">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-key"></use></svg>
+        <span id="keyLabelText"></span>
+      </label>
+      <div class="key-row">
+        <div class="input-container">
+         <input id="keyInput" type="password" autocomplete="new-password"
+         inputmode="text" placeholder="" />
+         <button type="button" id="toggleSecret" class="visibility-toggle" aria-label="Show key">
+           <svg class="icon" aria-hidden="true" focusable="false"><use id="toggleSecretIcon" href="#icon-eye"></use></svg>
+         </button>
+        </div>
+        <button id="copyKey" class="btn small icon-only" aria-label="Copy key">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg>
+        </button>
+      </div>
+
+      <div class="options">
+        <label class="strong-option">
+          <span class="switch">
+            <input id="useStrong" type="checkbox" checked />
+            <span class="switch-track" aria-hidden="true"></span>
+          </span>
+          <span id="strongLabel">Max-Enigma (AES-256)</span>
+        </label>
+        <button id="clearKey" class="btn tiny icon-only" title="Clear key" aria-label="Clear key">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg>
+        </button>
+      </div>
+      <p id="weakWarning" class="warning" hidden>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-alert-triangle"></use></svg>
+        <span id="weakWarningText"></span>
+      </p>
+    </section>
+
+    <section class="panel io-block">
+      <span class="panel-corner panel-corner--tl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--tr" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--br" aria-hidden="true"></span>
+
+      <label class="sr-only" for="inputArea" id="inputLabel">Message</label>
+      <textarea id="inputArea" rows="8" placeholder=""></textarea>
+
+      <div class="actions" role="toolbar" aria-label="Actions">
+        <button id="encryptBtn" class="btn primary">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-lock-closed"></use></svg>
+          <span class="btn-label" id="encryptBtnText"></span>
+        </button>
+        <button id="decryptBtn" class="btn">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-lock-open"></use></svg>
+          <span class="btn-label" id="decryptBtnText"></span>
+        </button>
+        <button id="clearBtn" class="btn outline">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-x"></use></svg>
+          <span class="btn-label" id="clearBtnText"></span>
+        </button>
+      </div>
+
+      <h3 class="result-title">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-output"></use></svg>
+        <span id="resultTitleText"></span>
+      </h3>
+      <pre id="output" tabindex="0" aria-live="polite"></pre>
+      <div class="output-actions">
+        <button id="copyOutput" class="btn small">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg>
+          <span class="btn-label" id="copyOutputText"></span>
+        </button>
+        <button id="backToTop" class="btn tiny icon-only" title="Back to top" aria-label="Back to top">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-arrow-up"></use></svg>
+        </button>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="about" class="info">
+      <h4 class="info-title">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"></use></svg>
+        <span id="aboutTitle"></span>
+      </h4>
+      <p id="aboutContent"></p>
+    </section>
+
+    <section id="how" class="info">
+      <h4 class="info-title">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-shield-lock"></use></svg>
+        <span id="howTitle"></span>
+      </h4>
+      <ol id="howSteps"></ol>
+      <p id="howNote"></p>
+    </section>
+
+  </main>
+  <footer class="footer">
+    <small>Built by <a href="https://github.com/fuegodev369" target="_blank" rel="noopener noreferrer">@FuegoDev</a> — <a href="https://github.com/fuegodev369/smart-enigma" target="_blank" rel="noopener noreferrer">source on GitHub</a></small>
+  </footer>
+
+  <div id="toast" role="status" aria-live="polite" class="toast" hidden>
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"></use></svg>
+    <span id="toastText"></span>
+  </div>
+
+  <script>
+/* app.js — Smart Enigma
+   Fully client-side, offline-capable text encryption tool.
+   - AES-256-GCM via Web Crypto (real encryption, on by default)
+   - Optional legacy substitution cipher, clearly labeled as demo-only
+   - No network calls, no external fonts/icons, no tracking
+   - Key is never stored or transmitted anywhere
+   - 9 languages (en, fr, zh, es, ru, de, pt, it, ko), see translations{}
+*/
+
+(() => {
+  'use strict';
+
+  const $ = sel => document.querySelector(sel);
+  const html = document.documentElement;
+  const langSelect = $('#langSelect');
+  const themeToggle = $('#themeToggle');
+  const keyInput = $('#keyInput');
+  const copyKeyBtn = $('#copyKey');
+  const clearKeyBtn = $('#clearKey');
+  const useStrong = $('#useStrong');
+  const weakWarning = $('#weakWarning');
+  const weakWarningText = $('#weakWarningText');
+  const inputArea = $('#inputArea');
+  const encryptBtn = $('#encryptBtn');
+  const decryptBtn = $('#decryptBtn');
+  const clearBtn = $('#clearBtn');
+  const output = $('#output');
+  const resultTitleText = $('#resultTitleText');
+  const copyOutput = $('#copyOutput');
+  const backToTop = $('#backToTop');
+  const toast = $('#toast');
+  const toastText = $('#toastText');
+  const strongLabel = $('#strongLabel');
+  const toggleSecret = $('#toggleSecret');
+  const toggleSecretIcon = $('#toggleSecretIcon');
+  const keyLabel = $('#keyLabel');
+  const keyLabelText = $('#keyLabelText');
+  const encryptBtnText = $('#encryptBtnText');
+  const decryptBtnText = $('#decryptBtnText');
+  const clearBtnText = $('#clearBtnText');
+  const copyOutputText = $('#copyOutputText');
+
+  let hasResult = false;
+  let currentLang = 'en';
+
+  /* -------- Translations (provided by SMART-ENIGMA-i18n, integrated as-is) -------- */
+  const translations = {
+    // --- English ---
+    en: {
+      langSelectLabel: 'Language',
+      langSelectAria: 'Choose language',
+      themeAria: 'Enable dark mode',
+      labelKey: 'Secret Key',
+      copyKeyAria: 'Copy key',
+      clearKeyTitle: 'Clear key',
+      toggleShowKey: 'Show key',
+      toggleHideKey: 'Hide key',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: 'Demo mode: this legacy substitution cipher is NOT secure. Keep Max-Enigma enabled for real encryption.',
+      inputPlaceholder: 'Type your message here...',
+      buttonEncrypt: 'ENCRYPT',
+      buttonDecrypt: 'DECRYPT',
+      buttonClear: 'CLEAR',
+      resultTitle: 'RESULT',
+      outputPlaceholder: 'The result will appear here...',
+      copyResult: 'Copy',
+      backToTopTitle: 'Back to top',
+      aboutTitle: 'About Smart Enigma',
+      aboutContent: 'Smart Enigma encrypts text entirely in your browser — nothing is ever sent anywhere. Keep "Max-Enigma" enabled for real AES-256 encryption. Never share your key with anyone you don\u2019t trust.',
+      howTitle: 'How it works',
+      howSteps: [
+        'Enter a secret key.',
+        'Type your message.',
+        'Keep "Max-Enigma" enabled for AES-256 (recommended).',
+        'Click ENCRYPT to secure the message.',
+        'Share the result — the recipient needs the same key and this page to decrypt it.'
+      ],
+      howNote: 'The substitution mode is a simplified cipher kept for demonstration purposes only. It is trivially breakable — never use it for anything sensitive.',
+      noKey: 'Enter a secret key first',
+      noInput: 'Nothing to encrypt/decrypt',
+      encrypting: 'Encrypting…',
+      decrypting: 'Decrypting…',
+      encryptedAes: 'Encrypted with AES-256',
+      encryptedSub: 'Encrypted (demo cipher)',
+      decryptedAes: 'Decrypted',
+      decryptedSub: 'Decrypted (demo cipher)',
+      decryptFail: 'Decryption failed — wrong key or corrupted text',
+      genericError: 'Something went wrong',
+      copied: 'Copied',
+      copyFail: 'Copy failed',
+      keyCleared: 'Key cleared',
+      clearConfirm: 'Clear the message and result?'
+    },
+
+    // --- Français ---
+    fr: {
+      langSelectLabel: 'Langue',
+      langSelectAria: 'Choisir la langue',
+      themeAria: 'Activer le mode sombre',
+      labelKey: 'Clé secrète',
+      copyKeyAria: 'Copier la clé',
+      clearKeyTitle: 'Effacer la clé',
+      toggleShowKey: 'Afficher la clé',
+      toggleHideKey: 'Masquer la clé',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: 'Mode démo : ce chiffrement par substitution n\u2019est PAS sécurisé. Gardez Max-Enigma activé pour un vrai chiffrement.',
+      inputPlaceholder: 'Saisissez votre message ici...',
+      buttonEncrypt: 'CHIFFRER',
+      buttonDecrypt: 'DÉCHIFFRER',
+      buttonClear: 'EFFACER',
+      resultTitle: 'RÉSULTAT',
+      outputPlaceholder: 'Le résultat apparaîtra ici...',
+      copyResult: 'Copier',
+      backToTopTitle: 'Haut de page',
+      aboutTitle: 'À propos de Smart Enigma',
+      aboutContent: 'Smart Enigma chiffre le texte entièrement dans votre navigateur — rien n\u2019est jamais envoyé ailleurs. Gardez "Max-Enigma" activé pour un vrai chiffrement AES-256. Ne partagez jamais votre clé avec une personne en qui vous n\u2019avez pas confiance.',
+      howTitle: 'Comment ça marche',
+      howSteps: [
+        'Entrez une clé secrète.',
+        'Saisissez votre message.',
+        'Gardez "Max-Enigma" activé pour AES-256 (recommandé).',
+        'Cliquez sur CHIFFRER pour sécuriser le message.',
+        'Partagez le résultat — le destinataire a besoin de la même clé et de cette page pour le déchiffrer.'
+      ],
+      howNote: 'Le mode substitution est un chiffrement simplifié gardé à des fins de démonstration uniquement. Il se casse trivialement — ne l\u2019utilisez jamais pour quelque chose de sensible.',
+      noKey: 'Entrez d\u2019abord une clé secrète',
+      noInput: 'Rien à chiffrer/déchiffrer',
+      encrypting: 'Chiffrement…',
+      decrypting: 'Déchiffrement…',
+      encryptedAes: 'Chiffré avec AES-256',
+      encryptedSub: 'Chiffré (mode démo)',
+      decryptedAes: 'Déchiffré',
+      decryptedSub: 'Déchiffré (mode démo)',
+      decryptFail: 'Échec du déchiffrement — mauvaise clé ou texte corrompu',
+      genericError: 'Une erreur est survenue',
+      copied: 'Copié',
+      copyFail: 'Échec de la copie',
+      keyCleared: 'Clé effacée',
+      clearConfirm: 'Effacer le message et le résultat ?'
+    },
+
+    // --- 中文 (简体) ---
+    zh: {
+      langSelectLabel: '语言',
+      langSelectAria: '选择语言',
+      themeAria: '启用深色模式',
+      labelKey: '密钥',
+      copyKeyAria: '复制密钥',
+      clearKeyTitle: '清除密钥',
+      toggleShowKey: '显示密钥',
+      toggleHideKey: '隐藏密钥',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: '演示模式：此传统替换密码不安全。请保持 Max-Enigma 处于启用状态以获得真正的加密。',
+      inputPlaceholder: '在此输入您的消息...',
+      buttonEncrypt: '加密',
+      buttonDecrypt: '解密',
+      buttonClear: '清除',
+      resultTitle: '结果',
+      outputPlaceholder: '结果将显示在此处...',
+      copyResult: '复制',
+      backToTopTitle: '返回顶部',
+      aboutTitle: '关于 Smart Enigma',
+      aboutContent: 'Smart Enigma 完全在您的浏览器中加密文本——任何内容都不会被发送到任何地方。请保持“Max-Enigma”处于启用状态以获得真正的 AES-256 加密。切勿与不信任的人分享您的密钥。',
+      howTitle: '工作原理',
+      howSteps: [
+        '输入一个密钥。',
+        '输入您的消息。',
+        '保持“Max-Enigma”处于启用状态以使用 AES-256（推荐）。',
+        '点击“加密”以保护消息。',
+        '分享结果——接收者需要相同的密钥和此页面才能解密。'
+      ],
+      howNote: '替换模式只是一种简化密码，仅保留用于演示目的。它极易被破解——切勿将其用于任何敏感内容。',
+      noKey: '请先输入密钥',
+      noInput: '没有可加密/解密的内容',
+      encrypting: '加密中…',
+      decrypting: '解密中…',
+      encryptedAes: '已使用 AES-256 加密',
+      encryptedSub: '已加密（演示密码）',
+      decryptedAes: '已解密',
+      decryptedSub: '已解密（演示密码）',
+      decryptFail: '解密失败——密钥错误或文本已损坏',
+      genericError: '发生错误',
+      copied: '已复制',
+      copyFail: '复制失败',
+      keyCleared: '密钥已清除',
+      clearConfirm: '确定要清除消息和结果吗？'
+    },
+
+    // --- Español ---
+    es: {
+      langSelectLabel: 'Idioma',
+      langSelectAria: 'Elegir idioma',
+      themeAria: 'Activar modo oscuro',
+      labelKey: 'Clave secreta',
+      copyKeyAria: 'Copiar clave',
+      clearKeyTitle: 'Borrar clave',
+      toggleShowKey: 'Mostrar clave',
+      toggleHideKey: 'Ocultar clave',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: 'Modo demo: este cifrado de sustitución heredado NO es seguro. Mantén Max-Enigma activado para un cifrado real.',
+      inputPlaceholder: 'Escribe tu mensaje aquí...',
+      buttonEncrypt: 'CIFRAR',
+      buttonDecrypt: 'DESCIFRAR',
+      buttonClear: 'BORRAR',
+      resultTitle: 'RESULTADO',
+      outputPlaceholder: 'El resultado aparecerá aquí...',
+      copyResult: 'Copiar',
+      backToTopTitle: 'Volver arriba',
+      aboutTitle: 'Acerca de Smart Enigma',
+      aboutContent: 'Smart Enigma cifra el texto completamente en tu navegador — nada se envía nunca a ningún sitio. Mantén "Max-Enigma" activado para un cifrado AES-256 real. Nunca compartas tu clave con alguien en quien no confíes.',
+      howTitle: 'Cómo funciona',
+      howSteps: [
+        'Introduce una clave secreta.',
+        'Escribe tu mensaje.',
+        'Mantén "Max-Enigma" activado para AES-256 (recomendado).',
+        'Haz clic en CIFRAR para proteger el mensaje.',
+        'Comparte el resultado — el destinatario necesita la misma clave y esta página para descifrarlo.'
+      ],
+      howNote: 'El modo de sustitución es un cifrado simplificado que se mantiene solo con fines de demostración. Es trivialmente vulnerable — nunca lo uses para algo sensible.',
+      noKey: 'Introduce primero una clave secreta',
+      noInput: 'Nada que cifrar/descifrar',
+      encrypting: 'Cifrando…',
+      decrypting: 'Descifrando…',
+      encryptedAes: 'Cifrado con AES-256',
+      encryptedSub: 'Cifrado (cifrado demo)',
+      decryptedAes: 'Descifrado',
+      decryptedSub: 'Descifrado (cifrado demo)',
+      decryptFail: 'Error al descifrar — clave incorrecta o texto dañado',
+      genericError: 'Ha ocurrido un error',
+      copied: 'Copiado',
+      copyFail: 'Error al copiar',
+      keyCleared: 'Clave borrada',
+      clearConfirm: '¿Borrar el mensaje y el resultado?'
+    },
+
+    // --- Русский ---
+    ru: {
+      langSelectLabel: 'Язык',
+      langSelectAria: 'Выбрать язык',
+      themeAria: 'Включить тёмную тему',
+      labelKey: 'Секретный ключ',
+      copyKeyAria: 'Скопировать ключ',
+      clearKeyTitle: 'Очистить ключ',
+      toggleShowKey: 'Показать ключ',
+      toggleHideKey: 'Скрыть ключ',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: 'Демо-режим: этот устаревший шифр подстановки НЕ является безопасным. Оставьте Max-Enigma включённым для настоящего шифрования.',
+      inputPlaceholder: 'Введите ваше сообщение здесь...',
+      buttonEncrypt: 'ЗАШИФРОВАТЬ',
+      buttonDecrypt: 'РАСШИФРОВАТЬ',
+      buttonClear: 'ОЧИСТИТЬ',
+      resultTitle: 'РЕЗУЛЬТАТ',
+      outputPlaceholder: 'Результат появится здесь...',
+      copyResult: 'Копировать',
+      backToTopTitle: 'Наверх',
+      aboutTitle: 'О Smart Enigma',
+      aboutContent: 'Smart Enigma шифрует текст полностью в вашем браузере — данные никуда не отправляются. Оставьте "Max-Enigma" включённым для настоящего шифрования AES-256. Никогда не передавайте свой ключ тем, кому не доверяете.',
+      howTitle: 'Как это работает',
+      howSteps: [
+        'Введите секретный ключ.',
+        'Введите ваше сообщение.',
+        'Оставьте "Max-Enigma" включённым для AES-256 (рекомендуется).',
+        'Нажмите «ЗАШИФРОВАТЬ», чтобы защитить сообщение.',
+        'Поделитесь результатом — получателю понадобится тот же ключ и эта страница для расшифровки.'
+      ],
+      howNote: 'Режим подстановки — это упрощённый шифр, оставленный только в демонстрационных целях. Он взламывается крайне легко — никогда не используйте его для чего-либо важного.',
+      noKey: 'Сначала введите секретный ключ',
+      noInput: 'Нечего шифровать/расшифровывать',
+      encrypting: 'Шифрование…',
+      decrypting: 'Расшифровка…',
+      encryptedAes: 'Зашифровано с AES-256',
+      encryptedSub: 'Зашифровано (демо-шифр)',
+      decryptedAes: 'Расшифровано',
+      decryptedSub: 'Расшифровано (демо-шифр)',
+      decryptFail: 'Ошибка расшифровки — неверный ключ или повреждённый текст',
+      genericError: 'Произошла ошибка',
+      copied: 'Скопировано',
+      copyFail: 'Не удалось скопировать',
+      keyCleared: 'Ключ очищен',
+      clearConfirm: 'Очистить сообщение и результат?'
+    },
+
+    // --- Deutsch ---
+    de: {
+      langSelectLabel: 'Sprache',
+      langSelectAria: 'Sprache wählen',
+      themeAria: 'Dunkelmodus aktivieren',
+      labelKey: 'Geheimer Schlüssel',
+      copyKeyAria: 'Schlüssel kopieren',
+      clearKeyTitle: 'Schlüssel löschen',
+      toggleShowKey: 'Schlüssel anzeigen',
+      toggleHideKey: 'Schlüssel verbergen',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: 'Demo-Modus: Diese veraltete Substitutionsverschlüsselung ist NICHT sicher. Lassen Sie Max-Enigma für eine echte Verschlüsselung aktiviert.',
+      inputPlaceholder: 'Geben Sie hier Ihre Nachricht ein...',
+      buttonEncrypt: 'VERSCHLÜSSELN',
+      buttonDecrypt: 'ENTSCHLÜSSELN',
+      buttonClear: 'LÖSCHEN',
+      resultTitle: 'ERGEBNIS',
+      outputPlaceholder: 'Das Ergebnis erscheint hier...',
+      copyResult: 'Kopieren',
+      backToTopTitle: 'Nach oben',
+      aboutTitle: 'Über Smart Enigma',
+      aboutContent: 'Smart Enigma verschlüsselt Text vollständig in Ihrem Browser — es wird niemals etwas irgendwohin gesendet. Lassen Sie "Max-Enigma" für eine echte AES-256-Verschlüsselung aktiviert. Teilen Sie Ihren Schlüssel niemals mit Personen, denen Sie nicht vertrauen.',
+      howTitle: 'So funktioniert es',
+      howSteps: [
+        'Geben Sie einen geheimen Schlüssel ein.',
+        'Geben Sie Ihre Nachricht ein.',
+        'Lassen Sie "Max-Enigma" für AES-256 aktiviert (empfohlen).',
+        'Klicken Sie auf VERSCHLÜSSELN, um die Nachricht zu sichern.',
+        'Teilen Sie das Ergebnis — der Empfänger benötigt denselben Schlüssel und diese Seite, um es zu entschlüsseln.'
+      ],
+      howNote: 'Der Substitutionsmodus ist eine vereinfachte Verschlüsselung, die nur zu Demonstrationszwecken erhalten bleibt. Sie lässt sich mühelos knacken — verwenden Sie sie niemals für etwas Sensibles.',
+      noKey: 'Geben Sie zuerst einen geheimen Schlüssel ein',
+      noInput: 'Nichts zu verschlüsseln/entschlüsseln',
+      encrypting: 'Verschlüsseln…',
+      decrypting: 'Entschlüsseln…',
+      encryptedAes: 'Mit AES-256 verschlüsselt',
+      encryptedSub: 'Verschlüsselt (Demo-Chiffre)',
+      decryptedAes: 'Entschlüsselt',
+      decryptedSub: 'Entschlüsselt (Demo-Chiffre)',
+      decryptFail: 'Entschlüsselung fehlgeschlagen — falscher Schlüssel oder beschädigter Text',
+      genericError: 'Etwas ist schiefgelaufen',
+      copied: 'Kopiert',
+      copyFail: 'Kopieren fehlgeschlagen',
+      keyCleared: 'Schlüssel gelöscht',
+      clearConfirm: 'Nachricht und Ergebnis löschen?'
+    },
+
+    // --- Português ---
+    pt: {
+      langSelectLabel: 'Idioma',
+      langSelectAria: 'Escolher idioma',
+      themeAria: 'Ativar modo escuro',
+      labelKey: 'Chave secreta',
+      copyKeyAria: 'Copiar chave',
+      clearKeyTitle: 'Limpar chave',
+      toggleShowKey: 'Mostrar chave',
+      toggleHideKey: 'Ocultar chave',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: 'Modo demo: esta cifra de substituição legada NÃO é segura. Mantenha o Max-Enigma ativado para uma criptografia real.',
+      inputPlaceholder: 'Digite sua mensagem aqui...',
+      buttonEncrypt: 'CRIPTOGRAFAR',
+      buttonDecrypt: 'DESCRIPTOGRAFAR',
+      buttonClear: 'LIMPAR',
+      resultTitle: 'RESULTADO',
+      outputPlaceholder: 'O resultado aparecerá aqui...',
+      copyResult: 'Copiar',
+      backToTopTitle: 'Voltar ao topo',
+      aboutTitle: 'Sobre o Smart Enigma',
+      aboutContent: 'O Smart Enigma criptografa o texto inteiramente no seu navegador — nada é enviado a lugar nenhum. Mantenha o "Max-Enigma" ativado para uma criptografia AES-256 real. Nunca compartilhe sua chave com alguém em quem você não confia.',
+      howTitle: 'Como funciona',
+      howSteps: [
+        'Insira uma chave secreta.',
+        'Digite sua mensagem.',
+        'Mantenha o "Max-Enigma" ativado para AES-256 (recomendado).',
+        'Clique em CRIPTOGRAFAR para proteger a mensagem.',
+        'Compartilhe o resultado — o destinatário precisa da mesma chave e desta página para descriptografá-lo.'
+      ],
+      howNote: 'O modo de substituição é uma cifra simplificada mantida apenas para fins de demonstração. Ela é facilmente quebrável — nunca a use para algo sensível.',
+      noKey: 'Insira primeiro uma chave secreta',
+      noInput: 'Nada para criptografar/descriptografar',
+      encrypting: 'Criptografando…',
+      decrypting: 'Descriptografando…',
+      encryptedAes: 'Criptografado com AES-256',
+      encryptedSub: 'Criptografado (cifra demo)',
+      decryptedAes: 'Descriptografado',
+      decryptedSub: 'Descriptografado (cifra demo)',
+      decryptFail: 'Falha ao descriptografar — chave incorreta ou texto corrompido',
+      genericError: 'Algo deu errado',
+      copied: 'Copiado',
+      copyFail: 'Falha ao copiar',
+      keyCleared: 'Chave apagada',
+      clearConfirm: 'Limpar a mensagem e o resultado?'
+    },
+
+    // --- Italiano ---
+    it: {
+      langSelectLabel: 'Lingua',
+      langSelectAria: 'Scegli la lingua',
+      themeAria: 'Attiva modalità scura',
+      labelKey: 'Chiave segreta',
+      copyKeyAria: 'Copia chiave',
+      clearKeyTitle: 'Cancella chiave',
+      toggleShowKey: 'Mostra chiave',
+      toggleHideKey: 'Nascondi chiave',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: 'Modalità demo: questo cifrario a sostituzione obsoleto NON è sicuro. Mantieni Max-Enigma attivo per una crittografia reale.',
+      inputPlaceholder: 'Digita qui il tuo messaggio...',
+      buttonEncrypt: 'CIFRA',
+      buttonDecrypt: 'DECIFRA',
+      buttonClear: 'CANCELLA',
+      resultTitle: 'RISULTATO',
+      outputPlaceholder: 'Il risultato apparirà qui...',
+      copyResult: 'Copia',
+      backToTopTitle: 'Torna in alto',
+      aboutTitle: 'Informazioni su Smart Enigma',
+      aboutContent: 'Smart Enigma cifra il testo interamente nel tuo browser — nulla viene mai inviato altrove. Mantieni "Max-Enigma" attivo per una crittografia AES-256 reale. Non condividere mai la tua chiave con qualcuno di cui non ti fidi.',
+      howTitle: 'Come funziona',
+      howSteps: [
+        'Inserisci una chiave segreta.',
+        'Digita il tuo messaggio.',
+        'Mantieni "Max-Enigma" attivo per AES-256 (consigliato).',
+        'Clicca su CIFRA per proteggere il messaggio.',
+        'Condividi il risultato — il destinatario ha bisogno della stessa chiave e di questa pagina per decifrarlo.'
+      ],
+      howNote: 'La modalità a sostituzione è un cifrario semplificato mantenuto solo a scopo dimostrativo. È facilmente violabile — non usarlo mai per qualcosa di sensibile.',
+      noKey: 'Inserisci prima una chiave segreta',
+      noInput: 'Niente da cifrare/decifrare',
+      encrypting: 'Cifratura…',
+      decrypting: 'Decifratura…',
+      encryptedAes: 'Cifrato con AES-256',
+      encryptedSub: 'Cifrato (cifrario demo)',
+      decryptedAes: 'Decifrato',
+      decryptedSub: 'Decifrato (cifrario demo)',
+      decryptFail: 'Decifratura non riuscita — chiave errata o testo danneggiato',
+      genericError: 'Qualcosa è andato storto',
+      copied: 'Copiato',
+      copyFail: 'Copia non riuscita',
+      keyCleared: 'Chiave cancellata',
+      clearConfirm: 'Cancellare il messaggio e il risultato?'
+    },
+
+    // --- 한국어 ---
+    ko: {
+      langSelectLabel: '언어',
+      langSelectAria: '언어 선택',
+      themeAria: '다크 모드 켜기',
+      labelKey: '비밀 키',
+      copyKeyAria: '키 복사',
+      clearKeyTitle: '키 지우기',
+      toggleShowKey: '키 표시',
+      toggleHideKey: '키 숨기기',
+      strongLabel: 'Max-Enigma (AES-256)',
+      weakWarning: '데모 모드: 이 구형 치환 암호는 안전하지 않습니다. 실제 암호화를 위해 Max-Enigma를 활성화 상태로 유지하세요.',
+      inputPlaceholder: '여기에 메시지를 입력하세요...',
+      buttonEncrypt: '암호화',
+      buttonDecrypt: '복호화',
+      buttonClear: '지우기',
+      resultTitle: '결과',
+      outputPlaceholder: '결과가 여기에 표시됩니다...',
+      copyResult: '복사',
+      backToTopTitle: '맨 위로',
+      aboutTitle: 'Smart Enigma 정보',
+      aboutContent: 'Smart Enigma는 브라우저 내에서만 텍스트를 암호화하며, 어떤 데이터도 외부로 전송되지 않습니다. 실제 AES-256 암호화를 위해 "Max-Enigma"를 활성화 상태로 유지하세요. 신뢰하지 않는 사람과는 절대 키를 공유하지 마세요.',
+      howTitle: '작동 방식',
+      howSteps: [
+        '비밀 키를 입력하세요.',
+        '메시지를 입력하세요.',
+        'AES-256을 위해 "Max-Enigma"를 활성화 상태로 유지하세요(권장).',
+        '메시지를 보호하려면 암호화를 클릭하세요.',
+        '결과를 공유하세요 — 받는 사람이 복호화하려면 동일한 키와 이 페이지가 필요합니다.'
+      ],
+      howNote: '치환 모드는 데모 목적으로만 남겨둔 간단한 암호입니다. 매우 쉽게 해독될 수 있으므로 민감한 용도로는 절대 사용하지 마세요.',
+      noKey: '먼저 비밀 키를 입력하세요',
+      noInput: '암호화/복호화할 내용이 없습니다',
+      encrypting: '암호화 중…',
+      decrypting: '복호화 중…',
+      encryptedAes: 'AES-256으로 암호화됨',
+      encryptedSub: '암호화됨(데모 암호)',
+      decryptedAes: '복호화됨',
+      decryptedSub: '복호화됨(데모 암호)',
+      decryptFail: '복호화 실패 — 잘못된 키 또는 손상된 텍스트',
+      genericError: '문제가 발생했습니다',
+      copied: '복사됨',
+      copyFail: '복사 실패',
+      keyCleared: '키가 지워졌습니다',
+      clearConfirm: '메시지와 결과를 지우시겠습니까?'
+    }
+  };
+
+  function t() {
+    return translations[currentLang] || translations.en;
+  }
+
+  function showToast(msg, ms = 2200) {
+    toast.hidden = false;
+    toastText.textContent = msg;
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => { toast.hidden = true; }, ms);
+  }
+
+  /* -------- Language auto-detection (9 supported languages) -------- */
+  function detectLang() {
+    const SUPPORTED = ['en', 'fr', 'zh', 'es', 'ru', 'de', 'pt', 'it', 'ko'];
+    const nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    const prefix = nav.slice(0, 2);
+    return SUPPORTED.includes(prefix) ? prefix : 'en';
+  }
+
+  function translateUI(lang) {
+    currentLang = translations[lang] ? lang : 'en';
+    const d = t();
+    html.lang = currentLang;
+
+    $('#langSelectLabel').textContent = d.langSelectLabel;
+    langSelect.setAttribute('aria-label', d.langSelectAria);
+    themeToggle.setAttribute('aria-label', d.themeAria);
+
+    keyLabelText.textContent = d.labelKey;
+    keyInput.placeholder = d.labelKey;
+    copyKeyBtn.setAttribute('aria-label', d.copyKeyAria);
+    clearKeyBtn.title = d.clearKeyTitle;
+    clearKeyBtn.setAttribute('aria-label', d.clearKeyTitle);
+    toggleSecret.setAttribute('aria-label', keyInput.type === 'password' ? d.toggleShowKey : d.toggleHideKey);
+
+    strongLabel.textContent = d.strongLabel;
+    weakWarningText.textContent = d.weakWarning;
+
+    inputArea.placeholder = d.inputPlaceholder;
+    encryptBtnText.textContent = d.buttonEncrypt;
+    decryptBtnText.textContent = d.buttonDecrypt;
+    clearBtnText.textContent = d.buttonClear;
+    resultTitleText.textContent = d.resultTitle;
+    copyOutputText.textContent = d.copyResult;
+    backToTop.title = d.backToTopTitle;
+    backToTop.setAttribute('aria-label', d.backToTopTitle);
+
+    if (!hasResult) {
+      output.textContent = d.outputPlaceholder;
+      output.classList.add('placeholder');
+    }
+
+    $('#aboutTitle').textContent = d.aboutTitle;
+    $('#aboutContent').textContent = d.aboutContent;
+    $('#howTitle').textContent = d.howTitle;
+
+    const stepsList = $('#howSteps');
+    stepsList.innerHTML = '';
+    d.howSteps.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = s;
+      stepsList.appendChild(li);
+    });
+    $('#howNote').textContent = d.howNote;
+  }
+
+  function updateWeakWarning() {
+    weakWarning.hidden = useStrong.checked;
+  }
+
+  /* -------- Legacy substitution cipher (demo only, NOT secure) -------- */
+  function generateSubstitution(key) {
+    let sum = 0;
+    for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i);
+    const letterShift = sum % 26;
+    const numberShift = sum % 10;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const digits = '0123456789';
+    const map = {}, numMap = {};
+    for (let i = 0; i < 26; i++) map[alphabet[i]] = alphabet[(i + letterShift) % 26];
+    for (let i = 0; i < 10; i++) numMap[digits[i]] = digits[(i + numberShift) % 10];
+    return { map, numMap };
+  }
+
+  function substituteTransform(text, keyMap, reverse = false) {
+    const { map, numMap } = keyMap;
+    const rMap = reverse ? Object.fromEntries(Object.entries(map).map(([k, v]) => [v, k])) : map;
+    const rNum = reverse ? Object.fromEntries(Object.entries(numMap).map(([k, v]) => [v, k])) : numMap;
+    let out = '';
+    for (const ch of text) {
+      if (/[A-Z]/.test(ch)) out += rMap[ch] || ch;
+      else if (/[a-z]/.test(ch)) {
+        const up = ch.toUpperCase();
+        out += (rMap[up] || up).toLowerCase();
+      } else if (/[0-9]/.test(ch)) out += rNum[ch] || ch;
+      else out += ch;
+    }
+    return out;
+  }
+
+  /* -------- AES-256-GCM via Web Crypto -------- */
+  async function deriveKey(password, salt, iterations = 600000) {
+    const enc = new TextEncoder();
+    const baseKey = await crypto.subtle.importKey('raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['encrypt', 'decrypt']
+    );
+  }
+
+  function concatBuffers(...buffers) {
+    const total = buffers.reduce((s, b) => s + (b.byteLength || b.length), 0);
+    const tmp = new Uint8Array(total);
+    let offset = 0;
+    for (const b of buffers) {
+      const u = new Uint8Array(b);
+      tmp.set(u, offset);
+      offset += u.length;
+    }
+    return tmp.buffer;
+  }
+
+  function bufToBase64(buf) {
+    return btoa(String.fromCharCode(...new Uint8Array(buf)));
+  }
+  function base64ToBuf(b64) {
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return arr.buffer;
+  }
+
+  async function encryptAesGcm(plain, password) {
+    const enc = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(password, salt);
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plain));
+    return bufToBase64(concatBuffers(salt.buffer, iv.buffer, ct));
+  }
+
+  async function decryptAesGcm(b64blob, password) {
+    const blob = base64ToBuf(b64blob);
+    const arr = new Uint8Array(blob);
+    const salt = arr.slice(0, 16).buffer;
+    const iv = arr.slice(16, 28).buffer;
+    const ct = arr.slice(28).buffer;
+    const key = await deriveKey(password, salt);
+    const plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(iv) }, key, ct);
+    return new TextDecoder().decode(plainBuf);
+  }
+
+  function setOutput(text) {
+    hasResult = true;
+    output.classList.remove('placeholder');
+    output.textContent = text;
+  }
+
+  /* -------- Core actions -------- */
+  async function encryptAction() {
+    const d = t();
+    try {
+      const key = keyInput.value || '';
+      if (!key) { showToast(d.noKey); return; }
+      const text = inputArea.value || '';
+      if (!text) { showToast(d.noInput); return; }
+
+      if (useStrong.checked && window.crypto && crypto.subtle) {
+        encryptBtn.disabled = true;
+        setOutput(d.encrypting);
+        const cipher = await encryptAesGcm(text, key);
+        setOutput(cipher);
+        showToast(d.encryptedAes);
+      } else {
+        const keyMap = generateSubstitution(key);
+        setOutput(substituteTransform(text, keyMap, false));
+        showToast(d.encryptedSub);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast(d.genericError);
+    } finally {
+      encryptBtn.disabled = false;
+    }
+  }
+
+  async function decryptAction() {
+    const d = t();
+    try {
+      const key = keyInput.value || '';
+      if (!key) { showToast(d.noKey); return; }
+      const text = inputArea.value || '';
+      if (!text) { showToast(d.noInput); return; }
+
+      if (useStrong.checked && window.crypto && crypto.subtle) {
+        decryptBtn.disabled = true;
+        setOutput(d.decrypting);
+        try {
+          const plain = await decryptAesGcm(text, key);
+          setOutput(plain);
+          showToast(d.decryptedAes);
+        } catch (e) {
+          setOutput('');
+          hasResult = false;
+          showToast(d.decryptFail);
+        }
+      } else {
+        const keyMap = generateSubstitution(key);
+        setOutput(substituteTransform(text, keyMap, true));
+        showToast(d.decryptedSub);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast(d.genericError);
+    } finally {
+      decryptBtn.disabled = false;
+    }
+  }
+
+  /* -------- Utilities -------- */
+  async function copyToClipboard(text) {
+    const d = t();
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      showToast(d.copied);
+    } catch {
+      showToast(d.copyFail);
+    }
+  }
+
+  function clearAll() {
+    const d = t();
+    if (!confirm(d.clearConfirm)) return;
+    inputArea.value = '';
+    hasResult = false;
+    output.textContent = d.outputPlaceholder;
+    output.classList.add('placeholder');
+  }
+
+  /* -------- Event wiring -------- */
+  langSelect.addEventListener('change', (e) => translateUI(e.target.value));
+  themeToggle.addEventListener('change', (e) => {
+    html.dataset.theme = e.target.checked ? 'dark' : 'light';
+  });
+  useStrong.addEventListener('change', updateWeakWarning);
+
+  encryptBtn.addEventListener('click', () => encryptAction());
+  decryptBtn.addEventListener('click', () => decryptAction());
+  clearBtn.addEventListener('click', () => clearAll());
+
+  copyKeyBtn.addEventListener('click', () => copyToClipboard(keyInput.value));
+  copyOutput.addEventListener('click', () => copyToClipboard(hasResult ? output.textContent : ''));
+
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  clearKeyBtn.addEventListener('click', () => { keyInput.value = ''; showToast(t().keyCleared); });
+
+  keyInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) encryptAction();
+  });
+
+  toggleSecret.addEventListener('click', () => {
+    const showing = keyInput.type === 'text';
+    keyInput.type = showing ? 'password' : 'text';
+    toggleSecretIcon.setAttribute('href', showing ? '#icon-eye' : '#icon-eye-off');
+    toggleSecret.setAttribute('aria-label', showing ? t().toggleShowKey : t().toggleHideKey);
+  });
+
+  window.addEventListener('beforeunload', () => {
+    try { keyInput.value = ''; } catch (e) {}
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const initialLang = detectLang();
+    langSelect.value = initialLang;
+    translateUI(initialLang);
+    updateWeakWarning();
+
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    html.dataset.theme = prefersDark ? 'dark' : 'light';
+    themeToggle.checked = prefersDark;
+  });
+
+})();
+  </script>
+</body>
+</html>
