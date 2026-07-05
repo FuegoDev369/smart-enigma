@@ -1804,19 +1804,32 @@
     return new Uint8Array(out);
   }
 
-  // 1-byte header (0 = raw, 1 = compressed) + payload, always picking
-  // whichever is smaller so the reported savings are never overstated.
+  /* Fix (v5.0.1): the header byte used to be a raw 0x00/0x01 control
+     byte. 0x00 is a perfectly legal, INVISIBLE UTF-8 NUL character, so
+     decrypting a compressed-and-flagged blob through the WRONG
+     (non-compression) path could silently reconstruct "\u0000 + the
+     original text" — indistinguishable from a real success in most
+     text fields. Using the printable ASCII digits '0'/'1' instead
+     keeps the format exactly as self-describing and 1-byte, but now
+     ANY toggle mismatch produces a visibly wrong leading character
+     instead of a silent, invisible one. Confirmed by manual testing
+     (TEST.md, test 1.4) before this fix. */
+  const COMPRESS_FLAG_RAW = 0x30;        // ASCII '0'
+  const COMPRESS_FLAG_COMPRESSED = 0x31; // ASCII '1'
+
+  // 1-byte header ('0' = raw, '1' = compressed) + payload, always
+  // picking whichever is smaller so the reported savings are never overstated.
   function compressPayloadBytes(bytes) {
     const compressed = lzssCompress(bytes);
     if (compressed.length < bytes.length) {
       const out = new Uint8Array(1 + compressed.length);
-      out[0] = 1;
+      out[0] = COMPRESS_FLAG_COMPRESSED;
       out.set(compressed, 1);
       const savings = bytes.length > 0 ? Math.round((1 - compressed.length / bytes.length) * 100) : 0;
       return { bytes: out, savings };
     }
     const out = new Uint8Array(1 + bytes.length);
-    out[0] = 0;
+    out[0] = COMPRESS_FLAG_RAW;
     out.set(bytes, 1);
     return { bytes: out, savings: 0 };
   }
@@ -1824,7 +1837,7 @@
   function decompressPayloadBytes(bytes) {
     const flag = bytes[0];
     const rest = bytes.slice(1);
-    return flag === 1 ? lzssDecompress(rest) : rest;
+    return flag === COMPRESS_FLAG_COMPRESSED ? lzssDecompress(rest) : rest;
   }
 
   /* -------- QR code encoder (Phase C, v5.0.0) --------
@@ -2561,6 +2574,15 @@
     hasResult = false;
     output.textContent = d.outputPlaceholder;
     output.classList.add('placeholder');
+
+    // Fix (v5.0.1): "× Effacer" left the QR code and any sound state
+    // from Phase C untouched — same cleanup as panic wipe, minus the
+    // key/file fields which clearAll never touched even before Phase C.
+    stopSoundListening();
+    qrDisplay.hidden = true;
+    if (qrDownloadBlobUrl) { URL.revokeObjectURL(qrDownloadBlobUrl); qrDownloadBlobUrl = null; }
+    compressionSavingsText.hidden = true;
+    lastCompressionSavings = null;
   }
 
   /* -------- Panic wipe (v3.0.0) --------
