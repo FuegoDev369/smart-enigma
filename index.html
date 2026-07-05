@@ -94,6 +94,37 @@
         <path d="M6.5 3.5 H13.5 L18 8 V20 a1 1 0 0 1 -1 1 H6.5 a1 1 0 0 1 -1 -1 V4.5 a1 1 0 0 1 1 -1 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
         <path d="M13.5 3.5 V7 a1 1 0 0 0 1 1 H18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
       </symbol>
+      <!-- Phase C (v5.0.0) — offline transfer icons, same hand-drawn 24x24 vocabulary -->
+      <symbol id="icon-qrcode" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="6.5" height="6.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <rect x="5.4" y="5.4" width="1.7" height="1.7" fill="currentColor"/>
+        <rect x="14.5" y="3" width="6.5" height="6.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <rect x="16.9" y="5.4" width="1.7" height="1.7" fill="currentColor"/>
+        <rect x="3" y="14.5" width="6.5" height="6.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <rect x="5.4" y="16.9" width="1.7" height="1.7" fill="currentColor"/>
+        <rect x="14.5" y="14.5" width="2.7" height="2.7" fill="currentColor"/>
+        <rect x="18.3" y="14.5" width="2.7" height="2.7" fill="currentColor"/>
+        <rect x="14.5" y="18.3" width="2.7" height="2.7" fill="currentColor"/>
+        <rect x="18.3" y="18.3" width="2.7" height="2.7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+      </symbol>
+      <symbol id="icon-waveform" viewBox="0 0 24 24">
+        <path d="M3 12 V12 M7 8.5 V15.5 M11 4.5 V19.5 M15 7 V17 M19 10 V14 M21 12 V12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-mic" viewBox="0 0 24 24">
+        <rect x="9.3" y="3" width="5.4" height="10.5" rx="2.7" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M6 11 a6 6 0 0 0 12 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M12 17 V21 M9 21 H15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-compress" viewBox="0 0 24 24">
+        <path d="M12 3 V9 M9 6 L12 9 L15 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 21 V15 M9 18 L12 15 L15 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 12 H19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-broadcast" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+        <path d="M8.5 15.5 a5 5 0 0 1 0 -7 M15.5 15.5 a5 5 0 0 0 0 -7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M5.3 18.7 a9.5 9.5 0 0 1 0 -13.4 M18.7 18.7 a9.5 9.5 0 0 0 0 -13.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -318,6 +349,78 @@
       </div>
     </section>
 
+    <!-- Phase C (v5.0.0) — Offline Transfer: compression, QR code, data-over-sound.
+         Operates on whatever ciphertext currently sits in #output; does not
+         touch the crypto core (deriveKey/encryptBytes/decryptBytes untouched). -->
+    <section class="panel airgap-block" aria-labelledby="airgapSectionLabelText">
+      <span class="panel-corner panel-corner--tl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--tr" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--br" aria-hidden="true"></span>
+
+      <p class="panel-label">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-broadcast"></use></svg>
+        <span id="airgapSectionLabelText"></span>
+      </p>
+      <p class="airgap-intro" id="airgapIntroText"></p>
+
+      <div class="airgap-option options">
+        <label class="strong-option">
+          <span class="switch">
+            <input type="checkbox" id="compressToggle" />
+            <span class="switch-track" aria-hidden="true"></span>
+          </span>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-compress"></use></svg>
+          <span id="compressToggleLabelText"></span>
+        </label>
+      </div>
+      <p class="airgap-hint" id="compressionHintText"></p>
+      <p class="airgap-savings" id="compressionSavingsText" hidden></p>
+
+      <div class="airgap-subsection">
+        <h4 class="airgap-subtitle">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-qrcode"></use></svg>
+          <span id="qrSectionLabelText"></span>
+        </h4>
+        <div class="actions airgap-actions" role="toolbar" aria-label="QR code actions">
+          <button id="qrGenerateBtn" class="btn">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-qrcode"></use></svg>
+            <span class="btn-label" id="qrGenerateBtnText"></span>
+          </button>
+        </div>
+        <div class="qr-display" id="qrDisplay" hidden>
+          <canvas id="qrCanvas" width="256" height="256" role="img" aria-describedby="qrScanHintText"></canvas>
+          <div class="airgap-actions">
+            <a id="qrDownloadLink" class="btn small" download>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-output"></use></svg>
+              <span class="btn-label" id="qrDownloadBtnText"></span>
+            </a>
+          </div>
+        </div>
+        <p class="airgap-hint" id="qrScanHintText"></p>
+      </div>
+
+      <div class="airgap-subsection">
+        <h4 class="airgap-subtitle">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-waveform"></use></svg>
+          <span id="soundSectionLabelText"></span>
+        </h4>
+        <div class="actions airgap-actions" role="toolbar" aria-label="Sound transfer actions">
+          <button id="soundEmitBtn" class="btn">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-waveform"></use></svg>
+            <span class="btn-label" id="soundEmitBtnText"></span>
+          </button>
+          <button id="soundListenBtn" class="btn">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-mic"></use></svg>
+            <span class="btn-label" id="soundListenBtnText"></span>
+          </button>
+        </div>
+        <p class="airgap-status" id="soundStatusText" aria-live="polite" hidden></p>
+        <p class="airgap-hint" id="soundMicPermissionText"></p>
+        <p class="airgap-hint" id="soundCaveatText"></p>
+      </div>
+    </section>
+
     <hr />
 
     <section id="about" class="info">
@@ -421,11 +524,40 @@
   const fileDownloadLink = $('#fileDownloadLink');
   const downloadResultText = $('#downloadResultText');
 
+  // Phase C additions (v5.0.0) — offline transfer (compression, QR, sound)
+  const airgapSectionLabelText = $('#airgapSectionLabelText');
+  const airgapIntroText = $('#airgapIntroText');
+  const compressToggle = $('#compressToggle');
+  const compressToggleLabelText = $('#compressToggleLabelText');
+  const compressionHintText = $('#compressionHintText');
+  const compressionSavingsText = $('#compressionSavingsText');
+  const qrSectionLabelText = $('#qrSectionLabelText');
+  const qrGenerateBtn = $('#qrGenerateBtn');
+  const qrGenerateBtnText = $('#qrGenerateBtnText');
+  const qrDisplay = $('#qrDisplay');
+  const qrCanvas = $('#qrCanvas');
+  const qrDownloadLink = $('#qrDownloadLink');
+  const qrDownloadBtnText = $('#qrDownloadBtnText');
+  const qrScanHintText = $('#qrScanHintText');
+  const soundSectionLabelText = $('#soundSectionLabelText');
+  const soundEmitBtn = $('#soundEmitBtn');
+  const soundEmitBtnText = $('#soundEmitBtnText');
+  const soundListenBtn = $('#soundListenBtn');
+  const soundListenBtnText = $('#soundListenBtnText');
+  const soundStatusText = $('#soundStatusText');
+  const soundMicPermissionText = $('#soundMicPermissionText');
+  const soundCaveatText = $('#soundCaveatText');
+
   let hasResult = false;
   let currentLang = 'en';
   let fingerprintVisible = false;
   let selectedFile = null;
   let fileResultBlobUrl = null;
+
+  // Phase C state (v5.0.0)
+  let qrDownloadBlobUrl = null;
+  let lastCompressionSavings = null;
+  let soundListenState = null; // holds { audioCtx, stream, processor } while actively listening
 
   /* -------- Translations (provided by SMART-ENIGMA-i18n, integrated as-is) -------- */
   const translations = {
@@ -499,7 +631,26 @@
       fileDecryptFail: 'Decryption failed. Check your key, or the file may not have been encrypted with Smart Enigma.',
       fileClearAction: 'Remove file',
       downloadResult: 'Download Result',
-      fileSelectedAria: 'File selected: {filename}'
+      fileSelectedAria: 'File selected: {filename}',
+
+      airgapSectionLabel: "Offline Transfer",
+      airgapIntro: "Send an encrypted message to another device without using a network — via QR code or sound.",
+      compressToggleLabel: "Compress before encrypting",
+      compressionSavings: "{percent}% smaller",
+      compressionHint: "Uses a simple built-in compressor with no external dependencies. Savings are modest — don't expect gzip-level results.",
+      qrSectionLabel: "QR Code",
+      qrGenerateAction: "Generate QR Code",
+      qrScanHint: "Scan with any standard QR code reader — including your phone's built-in camera. Smart Enigma isn't required to read it.",
+      qrDownloadAction: "Download QR Code",
+      qrTooLong: "Encrypted text is too long for a QR code. Try enabling compression or shortening your message.",
+      soundSectionLabel: "Sound Transfer",
+      soundEmitAction: "Play as Sound",
+      soundListenAction: "Listen for Sound",
+      soundEmitting: "Playing…",
+      soundListening: "Listening…",
+      soundMicPermission: "Microphone access is needed to listen for the sound sequence. Audio is processed entirely on this device and is never sent anywhere.",
+      soundDecodeFail: "Couldn't decode the sound. Background noise or distance from the source may be interfering.",
+      soundCaveat: "This is a best-effort method — sensitive to ambient noise and microphone/speaker quality. It isn't a guaranteed transmission protocol."
     },
 
     // --- Français ---
@@ -572,7 +723,26 @@
       fileDecryptFail: 'Échec du déchiffrement. Vérifiez votre clé, ou le fichier n\'a peut-être pas été chiffré avec Smart Enigma.',
       fileClearAction: 'Retirer le fichier',
       downloadResult: 'Télécharger le résultat',
-      fileSelectedAria: 'Fichier sélectionné : {filename}'
+      fileSelectedAria: 'Fichier sélectionné : {filename}',
+
+      airgapSectionLabel: "Transfert sans réseau",
+      airgapIntro: "Transmettez un message chiffré vers un autre appareil sans passer par un réseau — par QR code ou par son.",
+      compressToggleLabel: "Compresser avant chiffrement",
+      compressionSavings: "{percent} % plus léger",
+      compressionHint: "Utilise un compresseur simplifié, sans dépendance externe. Le gain est modeste — ne vous attendez pas à des résultats comparables à gzip.",
+      qrSectionLabel: "QR code",
+      qrGenerateAction: "Générer le QR code",
+      qrScanHint: "Scannable avec n'importe quel lecteur de QR code standard — y compris l'appareil photo natif d'un smartphone. Smart Enigma n'est pas nécessaire pour le lire.",
+      qrDownloadAction: "Télécharger le QR code",
+      qrTooLong: "Le texte chiffré dépasse la capacité du QR code. Essayez d'activer la compression ou de raccourcir votre message.",
+      soundSectionLabel: "Transfert par son",
+      soundEmitAction: "Émettre en son",
+      soundListenAction: "Écouter un son",
+      soundEmitting: "Émission en cours…",
+      soundListening: "Écoute en cours…",
+      soundMicPermission: "L'accès au microphone est nécessaire pour écouter la séquence sonore. L'audio est traité entièrement sur cet appareil et n'est jamais envoyé ailleurs.",
+      soundDecodeFail: "Impossible de décoder le son. Le bruit ambiant ou la distance par rapport à la source peuvent en être la cause.",
+      soundCaveat: "Cette méthode est fournie « au mieux » — sensible au bruit ambiant et à la qualité du micro/haut-parleur. Ce n'est pas un protocole de transmission garanti."
     },
 
     // --- 中文 (简体) ---
@@ -645,7 +815,26 @@
       fileDecryptFail: '解密失败。请检查密钥，该文件也可能未使用 Smart Enigma 加密。',
       fileClearAction: '移除文件',
       downloadResult: '下载结果',
-      fileSelectedAria: '已选择文件：{filename}'
+      fileSelectedAria: '已选择文件：{filename}',
+
+      airgapSectionLabel: "离线传输",
+      airgapIntro: "无需联网即可将加密消息传输到另一台设备——通过二维码或声音。",
+      compressToggleLabel: "加密前压缩",
+      compressionSavings: "缩小 {percent}%",
+      compressionHint: "使用内置的简化压缩算法，不依赖外部库。压缩效果有限，不要期待与 gzip 相当的效果。",
+      qrSectionLabel: "二维码",
+      qrGenerateAction: "生成二维码",
+      qrScanHint: "可用任何标准二维码扫描工具识别，包括手机自带相机，无需打开 Smart Enigma 即可读取。",
+      qrDownloadAction: "下载二维码",
+      qrTooLong: "加密文本超出二维码容量上限，请尝试启用压缩或缩短消息内容。",
+      soundSectionLabel: "声音传输",
+      soundEmitAction: "以声音播放",
+      soundListenAction: "接收声音",
+      soundEmitting: "正在播放…",
+      soundListening: "正在接收…",
+      soundMicPermission: "接收声音序列需要麦克风权限。音频仅在本设备本地处理，绝不会被发送到任何地方。",
+      soundDecodeFail: "无法解码声音，环境噪音或与声源的距离可能是原因。",
+      soundCaveat: "此方法为尽力而为，容易受环境噪音及麦克风/扬声器质量影响，并非可靠保证的传输方式。"
     },
 
     // --- Español ---
@@ -718,7 +907,26 @@
       fileDecryptFail: 'Error al descifrar. Verifica tu clave; puede que el archivo no haya sido cifrado con Smart Enigma.',
       fileClearAction: 'Quitar archivo',
       downloadResult: 'Descargar resultado',
-      fileSelectedAria: 'Archivo seleccionado: {filename}'
+      fileSelectedAria: 'Archivo seleccionado: {filename}',
+
+      airgapSectionLabel: "Transferencia sin red",
+      airgapIntro: "Envía un mensaje cifrado a otro dispositivo sin usar una red, mediante código QR o sonido.",
+      compressToggleLabel: "Comprimir antes de cifrar",
+      compressionSavings: "{percent} % más ligero",
+      compressionHint: "Usa un compresor simplificado, sin dependencias externas. La reducción es modesta: no esperes resultados comparables a gzip.",
+      qrSectionLabel: "Código QR",
+      qrGenerateAction: "Generar código QR",
+      qrScanHint: "Se puede escanear con cualquier lector de códigos QR estándar, incluida la cámara nativa de un smartphone. No es necesario tener Smart Enigma para leerlo.",
+      qrDownloadAction: "Descargar código QR",
+      qrTooLong: "El texto cifrado supera la capacidad del código QR. Prueba a activar la compresión o a acortar tu mensaje.",
+      soundSectionLabel: "Transferencia por sonido",
+      soundEmitAction: "Emitir como sonido",
+      soundListenAction: "Escuchar sonido",
+      soundEmitting: "Emitiendo…",
+      soundListening: "Escuchando…",
+      soundMicPermission: "Se necesita acceso al micrófono para escuchar la secuencia sonora. El audio se procesa por completo en este dispositivo y nunca se envía a ningún otro lugar.",
+      soundDecodeFail: "No se pudo decodificar el sonido. El ruido ambiental o la distancia respecto a la fuente pueden estar interfiriendo.",
+      soundCaveat: "Este método funciona de forma «best-effort»: es sensible al ruido ambiental y a la calidad del micrófono/altavoz. No es un protocolo de transmisión garantizado."
     },
 
     // --- Русский ---
@@ -791,7 +999,26 @@
       fileDecryptFail: 'Ошибка расшифровки. Проверьте ключ — возможно, файл был зашифрован не с помощью Smart Enigma.',
       fileClearAction: 'Удалить файл',
       downloadResult: 'Скачать результат',
-      fileSelectedAria: 'Выбран файл: {filename}'
+      fileSelectedAria: 'Выбран файл: {filename}',
+
+      airgapSectionLabel: "Передача без сети",
+      airgapIntro: "Передайте зашифрованное сообщение на другое устройство без использования сети — через QR-код или звук.",
+      compressToggleLabel: "Сжимать перед шифрованием",
+      compressionSavings: "Меньше на {percent} %",
+      compressionHint: "Используется упрощённый встроенный компрессор без внешних зависимостей. Выигрыш в размере скромный — не ожидайте результатов на уровне gzip.",
+      qrSectionLabel: "QR-код",
+      qrGenerateAction: "Создать QR-код",
+      qrScanHint: "Считывается любым стандартным сканером QR-кодов, включая штатную камеру смартфона. Smart Enigma для этого не требуется.",
+      qrDownloadAction: "Скачать QR-код",
+      qrTooLong: "Зашифрованный текст превышает вместимость QR-кода. Попробуйте включить сжатие или сократить сообщение.",
+      soundSectionLabel: "Передача по звуку",
+      soundEmitAction: "Воспроизвести как звук",
+      soundListenAction: "Слушать звук",
+      soundEmitting: "Воспроизведение…",
+      soundListening: "Прослушивание…",
+      soundMicPermission: "Для прослушивания звуковой последовательности нужен доступ к микрофону. Аудио обрабатывается полностью на этом устройстве и никуда не отправляется.",
+      soundDecodeFail: "Не удалось декодировать звук. Причиной может быть фоновый шум или расстояние до источника.",
+      soundCaveat: "Этот способ работает «по возможности» — он чувствителен к фоновому шуму и качеству микрофона/динамика. Это не гарантированный протокол передачи."
     },
 
     // --- Deutsch ---
@@ -864,7 +1091,26 @@
       fileDecryptFail: 'Entschlüsselung fehlgeschlagen. Überprüfen Sie Ihren Schlüssel – die Datei wurde möglicherweise nicht mit Smart Enigma verschlüsselt.',
       fileClearAction: 'Datei entfernen',
       downloadResult: 'Ergebnis herunterladen',
-      fileSelectedAria: 'Datei ausgewählt: {filename}'
+      fileSelectedAria: 'Datei ausgewählt: {filename}',
+
+      airgapSectionLabel: "Netzwerkfreie Übertragung",
+      airgapIntro: "Übertragen Sie eine verschlüsselte Nachricht ohne Netzwerk auf ein anderes Gerät — per QR-Code oder Ton.",
+      compressToggleLabel: "Vor der Verschlüsselung komprimieren",
+      compressionSavings: "{percent} % kleiner",
+      compressionHint: "Verwendet einen vereinfachten, integrierten Kompressor ohne externe Abhängigkeiten. Die Einsparung ist gering — erwarten Sie keine Ergebnisse auf gzip-Niveau.",
+      qrSectionLabel: "QR-Code",
+      qrGenerateAction: "QR-Code erzeugen",
+      qrScanHint: "Mit jedem gängigen QR-Code-Scanner lesbar — auch mit der integrierten Kamera eines Smartphones. Smart Enigma wird zum Lesen nicht benötigt.",
+      qrDownloadAction: "QR-Code herunterladen",
+      qrTooLong: "Der verschlüsselte Text überschreitet die Kapazität des QR-Codes. Aktivieren Sie die Komprimierung oder kürzen Sie Ihre Nachricht.",
+      soundSectionLabel: "Übertragung per Ton",
+      soundEmitAction: "Als Ton abspielen",
+      soundListenAction: "Ton empfangen",
+      soundEmitting: "Wird abgespielt…",
+      soundListening: "Wird empfangen…",
+      soundMicPermission: "Für den Empfang der Tonsequenz ist Mikrofonzugriff erforderlich. Die Audiodaten werden ausschließlich lokal auf diesem Gerät verarbeitet und nie weitergesendet.",
+      soundDecodeFail: "Der Ton konnte nicht dekodiert werden. Umgebungsgeräusche oder ein zu großer Abstand zur Quelle können die Ursache sein.",
+      soundCaveat: "Diese Methode arbeitet nach dem Best-Effort-Prinzip — sie reagiert empfindlich auf Umgebungsgeräusche sowie Mikrofon- und Lautsprecherqualität und ist kein garantiertes Übertragungsprotokoll."
     },
 
     // --- Português ---
@@ -937,7 +1183,26 @@
       fileDecryptFail: 'Falha na descriptografia. Verifique sua chave; o arquivo pode não ter sido criptografado com o Smart Enigma.',
       fileClearAction: 'Remover arquivo',
       downloadResult: 'Baixar resultado',
-      fileSelectedAria: 'Arquivo selecionado: {filename}'
+      fileSelectedAria: 'Arquivo selecionado: {filename}',
+
+      airgapSectionLabel: "Transferência sem rede",
+      airgapIntro: "Envie uma mensagem cifrada para outro dispositivo sem usar rede — por código QR ou som.",
+      compressToggleLabel: "Compactar antes de cifrar",
+      compressionSavings: "{percent}% menor",
+      compressionHint: "Usa um compressor simplificado, sem dependências externas. O ganho é modesto — não espere resultados no nível do gzip.",
+      qrSectionLabel: "Código QR",
+      qrGenerateAction: "Gerar código QR",
+      qrScanHint: "Pode ser lido com qualquer leitor de QR padrão, incluindo a câmera nativa do smartphone. Não é necessário ter o Smart Enigma para ler.",
+      qrDownloadAction: "Baixar código QR",
+      qrTooLong: "O texto cifrado excede a capacidade do código QR. Tente ativar a compactação ou encurtar sua mensagem.",
+      soundSectionLabel: "Transferência por som",
+      soundEmitAction: "Emitir como som",
+      soundListenAction: "Ouvir som",
+      soundEmitting: "Emitindo…",
+      soundListening: "Ouvindo…",
+      soundMicPermission: "É necessário acesso ao microfone para ouvir a sequência sonora. O áudio é processado inteiramente neste dispositivo e nunca é enviado a lugar nenhum.",
+      soundDecodeFail: "Não foi possível decodificar o som. Ruído ambiente ou distância da fonte podem estar interferindo.",
+      soundCaveat: "Este método funciona em regime de melhor esforço — é sensível a ruído ambiente e à qualidade do microfone/alto-falante. Não é um protocolo de transmissão garantido."
     },
 
     // --- Italiano ---
@@ -1010,7 +1275,26 @@
       fileDecryptFail: 'Decrittografia non riuscita. Controlla la chiave; il file potrebbe non essere stato crittografato con Smart Enigma.',
       fileClearAction: 'Rimuovi file',
       downloadResult: 'Scarica risultato',
-      fileSelectedAria: 'File selezionato: {filename}'
+      fileSelectedAria: 'File selezionato: {filename}',
+
+      airgapSectionLabel: "Trasferimento senza rete",
+      airgapIntro: "Invia un messaggio cifrato a un altro dispositivo senza usare una rete — tramite codice QR o suono.",
+      compressToggleLabel: "Comprimi prima della cifratura",
+      compressionSavings: "{percent}% più leggero",
+      compressionHint: "Utilizza un compressore semplificato, senza dipendenze esterne. Il guadagno è modesto: non aspettarti risultati paragonabili a gzip.",
+      qrSectionLabel: "Codice QR",
+      qrGenerateAction: "Genera codice QR",
+      qrScanHint: "Leggibile con qualsiasi lettore di codici QR standard, inclusa la fotocamera nativa dello smartphone. Non è necessario avere Smart Enigma per leggerlo.",
+      qrDownloadAction: "Scarica codice QR",
+      qrTooLong: "Il testo cifrato supera la capacità del codice QR. Prova ad attivare la compressione o ad accorciare il messaggio.",
+      soundSectionLabel: "Trasferimento tramite suono",
+      soundEmitAction: "Riproduci come suono",
+      soundListenAction: "Ascolta il suono",
+      soundEmitting: "Riproduzione in corso…",
+      soundListening: "Ascolto in corso…",
+      soundMicPermission: "È necessario l'accesso al microfono per ascoltare la sequenza sonora. L'audio viene elaborato interamente su questo dispositivo e non viene mai inviato altrove.",
+      soundDecodeFail: "Impossibile decodificare il suono. Il rumore ambientale o la distanza dalla fonte potrebbero esserne la causa.",
+      soundCaveat: "Questo metodo funziona con il principio del \"best effort\": è sensibile al rumore ambientale e alla qualità di microfono/altoparlante e non è un protocollo di trasmissione garantito."
     },
 
     // --- 한국어 ---
@@ -1083,7 +1367,26 @@
       fileDecryptFail: '복호화에 실패했습니다. 키를 확인하거나, 파일이 Smart Enigma로 암호화되지 않았을 수 있습니다.',
       fileClearAction: '파일 제거',
       downloadResult: '결과 다운로드',
-      fileSelectedAria: '선택된 파일: {filename}'
+      fileSelectedAria: '선택된 파일: {filename}',
+
+      airgapSectionLabel: "네트워크 없는 전송",
+      airgapIntro: "네트워크 없이 QR 코드 또는 소리를 통해 암호화된 메시지를 다른 기기로 전송하세요.",
+      compressToggleLabel: "암호화 전 압축",
+      compressionSavings: "{percent}% 감소",
+      compressionHint: "외부 종속성 없이 간단한 내장 압축 방식을 사용합니다. 압축 효과는 제한적이며 gzip 수준의 결과를 기대하지 마세요.",
+      qrSectionLabel: "QR 코드",
+      qrGenerateAction: "QR 코드 생성",
+      qrScanHint: "스마트폰 기본 카메라를 포함한 모든 표준 QR 코드 스캐너로 읽을 수 있습니다. 읽는 데 Smart Enigma가 필요하지 않습니다.",
+      qrDownloadAction: "QR 코드 다운로드",
+      qrTooLong: "암호화된 텍스트가 QR 코드 용량을 초과했습니다. 압축을 활성화하거나 메시지를 줄여 보세요.",
+      soundSectionLabel: "소리 전송",
+      soundEmitAction: "소리로 재생",
+      soundListenAction: "소리 듣기",
+      soundEmitting: "재생 중…",
+      soundListening: "수신 중…",
+      soundMicPermission: "소리 시퀀스를 수신하려면 마이크 접근 권한이 필요합니다. 오디오는 이 기기에서만 처리되며 어디로도 전송되지 않습니다.",
+      soundDecodeFail: "소리를 디코딩할 수 없습니다. 주변 소음이나 음원과의 거리가 원인일 수 있습니다.",
+      soundCaveat: "이 방식은 최선을 다하는(best-effort) 방식으로, 주변 소음과 마이크/스피커 품질에 민감하며 전송을 보장하는 프로토콜이 아닙니다."
     }
   };
 
@@ -1174,6 +1477,24 @@
     if (selectedFile) {
       fileSelectedRow.setAttribute('aria-label', d.fileSelectedAria.replace('{filename}', selectedFile.name));
     }
+
+    // Phase C additions (v5.0.0) — offline transfer
+    airgapSectionLabelText.textContent = d.airgapSectionLabel;
+    airgapIntroText.textContent = d.airgapIntro;
+    compressToggleLabelText.textContent = d.compressToggleLabel;
+    compressionHintText.textContent = d.compressionHint;
+    if (lastCompressionSavings !== null) {
+      compressionSavingsText.textContent = d.compressionSavings.replace('{percent}', lastCompressionSavings);
+    }
+    qrSectionLabelText.textContent = d.qrSectionLabel;
+    qrGenerateBtnText.textContent = d.qrGenerateAction;
+    qrDownloadBtnText.textContent = d.qrDownloadAction;
+    qrScanHintText.textContent = d.qrScanHint;
+    soundSectionLabelText.textContent = d.soundSectionLabel;
+    soundEmitBtnText.textContent = d.soundEmitAction;
+    soundListenBtnText.textContent = d.soundListenAction;
+    soundMicPermissionText.textContent = d.soundMicPermission;
+    soundCaveatText.textContent = d.soundCaveat;
   }
 
   function updateWeakWarning() {
@@ -1396,6 +1717,623 @@
     return { name, content: bytes.slice(2 + len) };
   }
 
+  /* -------- Compression (Phase C, v5.0.0) --------
+     Homemade LZSS-style compressor (sliding window + literal/match
+     tokens), written from scratch, no external library — as documented
+     in Plan-d'évolution.md ("un algorithme maison aura un ratio modeste
+     comparé à gzip"). Built ENTIRELY OUTSIDE the crypto core: it only
+     reshapes the PLAINTEXT bytes before they reach the untouched
+     encryptBytes()/decryptBytes(), exactly like the Phase B file
+     wrapper already does. A 1-byte self-describing header (0 = stored
+     raw, 1 = LZSS-compressed) lets the encoder fall back to storing the
+     original bytes untouched whenever compression would not actually
+     help (e.g. already-random-looking short text), so the reported
+     savings are always honest. Existing AES/substitution ciphertexts
+     produced without this toggle are completely unaffected: this path
+     is only used when the "compress before encrypting" switch is
+     enabled on BOTH ends, exactly like the existing Max-Enigma toggle
+     already requires matching state on both sides to decrypt. */
+  const LZSS_WINDOW_SIZE = 4095; // fits exactly in the 12-bit offset field
+  const LZSS_MIN_MATCH = 3;
+  const LZSS_MAX_MATCH = 18; // 4-bit length field encodes (length - 3)
+
+  function lzssCompress(bytes) {
+    const out = [];
+    let controlByte = 0;
+    let controlCount = 0;
+    let controlPos = -1;
+
+    function flushControl() { if (controlPos >= 0) out[controlPos] = controlByte; }
+    function startControlIfNeeded() {
+      if (controlCount === 0) { controlPos = out.length; out.push(0); controlByte = 0; }
+    }
+    function pushLiteral(byte) {
+      startControlIfNeeded();
+      out.push(byte);
+      controlCount++;
+      if (controlCount === 8) { flushControl(); controlCount = 0; }
+    }
+    function pushMatch(offset, length) {
+      startControlIfNeeded();
+      controlByte |= (1 << controlCount);
+      out.push((offset >> 4) & 0xFF);
+      out.push(((offset & 0xF) << 4) | (length - LZSS_MIN_MATCH));
+      controlCount++;
+      if (controlCount === 8) { flushControl(); controlCount = 0; }
+    }
+
+    let pos = 0;
+    const n = bytes.length;
+    while (pos < n) {
+      let bestLen = 0, bestOffset = 0;
+      const windowStart = Math.max(0, pos - LZSS_WINDOW_SIZE);
+      const maxLen = Math.min(LZSS_MAX_MATCH, n - pos);
+      if (maxLen >= LZSS_MIN_MATCH) {
+        for (let cand = pos - 1; cand >= windowStart; cand--) {
+          let len = 0;
+          while (len < maxLen && bytes[cand + len] === bytes[pos + len]) len++;
+          if (len > bestLen) { bestLen = len; bestOffset = pos - cand; }
+          if (bestLen === maxLen) break;
+        }
+      }
+      if (bestLen >= LZSS_MIN_MATCH) { pushMatch(bestOffset, bestLen); pos += bestLen; }
+      else { pushLiteral(bytes[pos]); pos += 1; }
+    }
+    flushControl();
+    return new Uint8Array(out);
+  }
+
+  function lzssDecompress(bytes) {
+    const out = [];
+    let i = 0;
+    const n = bytes.length;
+    while (i < n) {
+      const control = bytes[i++];
+      for (let bit = 0; bit < 8 && i < n; bit++) {
+        if ((control >> bit) & 1) {
+          const b1 = bytes[i++], b2 = bytes[i++];
+          const offset = (b1 << 4) | (b2 >> 4);
+          const length = (b2 & 0xF) + LZSS_MIN_MATCH;
+          const start = out.length - offset;
+          for (let k = 0; k < length; k++) out.push(out[start + k]);
+        } else {
+          out.push(bytes[i++]);
+        }
+      }
+    }
+    return new Uint8Array(out);
+  }
+
+  // 1-byte header (0 = raw, 1 = compressed) + payload, always picking
+  // whichever is smaller so the reported savings are never overstated.
+  function compressPayloadBytes(bytes) {
+    const compressed = lzssCompress(bytes);
+    if (compressed.length < bytes.length) {
+      const out = new Uint8Array(1 + compressed.length);
+      out[0] = 1;
+      out.set(compressed, 1);
+      const savings = bytes.length > 0 ? Math.round((1 - compressed.length / bytes.length) * 100) : 0;
+      return { bytes: out, savings };
+    }
+    const out = new Uint8Array(1 + bytes.length);
+    out[0] = 0;
+    out.set(bytes, 1);
+    return { bytes: out, savings: 0 };
+  }
+
+  function decompressPayloadBytes(bytes) {
+    const flag = bytes[0];
+    const rest = bytes.slice(1);
+    return flag === 1 ? lzssDecompress(rest) : rest;
+  }
+
+  /* -------- QR code encoder (Phase C, v5.0.0) --------
+     Hand-written byte-mode QR encoder (versions 1-40, EC level M),
+     built from scratch against the public ISO/IEC 18004 algorithm —
+     GF(256) Reed-Solomon error correction, standard block-size and
+     alignment-pattern tables, auto version + mask selection. No
+     external library. Chosen deliberately over a "homemade" 2D code
+     (see Plan-d'évolution.md) so the result is scannable by any
+     standard QR reader, not just Smart Enigma itself. Verified against
+     an independent Python reference pipeline (qrcode + pyzbar/OpenCV)
+     during development: exact matrix match at fixed mask, and
+     successful end-to-end decode across small/medium/large payloads. */
+  const QR = (() => {
+    const GF_EXP = new Uint8Array(512);
+    const GF_LOG = new Uint8Array(256);
+    (function buildGF() {
+      let x = 1;
+      for (let i = 0; i < 255; i++) {
+        GF_EXP[i] = x;
+        GF_LOG[x] = i;
+        x <<= 1;
+        if (x & 0x100) x ^= 0x11D;
+      }
+      for (let i = 255; i < 512; i++) GF_EXP[i] = GF_EXP[i - 255];
+    })();
+    function gfMul(a, b) { return (a === 0 || b === 0) ? 0 : GF_EXP[GF_LOG[a] + GF_LOG[b]]; }
+
+    function rsGeneratorPoly(degree) {
+      let poly = [1];
+      for (let i = 0; i < degree; i++) {
+        const next = new Array(poly.length + 1).fill(0);
+        for (let j = 0; j < poly.length; j++) {
+          next[j] ^= gfMul(poly[j], 1);
+          next[j + 1] ^= gfMul(poly[j], GF_EXP[i]);
+        }
+        poly = next;
+      }
+      return poly;
+    }
+    function rsRemainder(dataCodewords, ecLen) {
+      const gen = rsGeneratorPoly(ecLen);
+      const buf = dataCodewords.concat(new Array(ecLen).fill(0));
+      for (let i = 0; i < dataCodewords.length; i++) {
+        const coeff = buf[i];
+        if (coeff === 0) continue;
+        for (let j = 0; j < gen.length; j++) buf[i + j] ^= gfMul(gen[j], coeff);
+      }
+      return buf.slice(dataCodewords.length);
+    }
+
+    // Standard tables (ISO/IEC 18004), EC level M only.
+    const RS_BLOCKS_M = [
+      [1,26,16],[1,44,28],[1,70,44],[2,50,32],[2,67,43],
+      [4,43,27],[4,49,31],[2,60,38,2,61,39],[3,58,36,2,59,37],
+      [4,69,43,1,70,44],[1,80,50,4,81,51],[6,58,36,2,59,37],
+      [8,59,37,1,60,38],[4,64,40,5,65,41],[5,65,41,5,66,42],
+      [7,73,45,3,74,46],[10,74,46,1,75,47],[9,69,43,4,70,44],
+      [3,70,44,11,71,45],[3,67,41,13,68,42],[17,68,42],
+      [17,74,46],[4,75,47,14,76,48],[6,73,45,14,74,46],
+      [8,75,47,13,76,48],[19,74,46,4,75,47],[22,73,45,3,74,46],
+      [3,73,45,23,74,46],[21,73,45,7,74,46],[19,75,47,10,76,48],
+      [2,74,46,29,75,47],[10,74,46,23,75,47],[14,74,46,21,75,47],
+      [14,74,46,23,75,47],[12,75,47,26,76,48],[6,75,47,34,76,48],
+      [29,74,46,14,75,47],[13,74,46,32,75,47],[40,75,47,7,76,48],
+      [18,75,47,31,76,48]
+    ];
+    const ALIGNMENT_POSITIONS = [
+      [],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],
+      [6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],
+      [6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],
+      [6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],
+      [6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],
+      [6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],
+      [6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],
+      [6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],
+      [6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],
+      [6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],
+      [6,30,58,86,114,142,170]
+    ];
+    const EC_LEVEL_BITS_M = 0b00;
+
+    function versionCapacity(version) {
+      const rows = RS_BLOCKS_M[version - 1];
+      let totalData = 0;
+      for (let g = 0; g < rows.length; g += 3) totalData += rows[g] * rows[g + 2];
+      return totalData;
+    }
+    function charCountBits(version) { return version <= 9 ? 8 : 16; }
+
+    function buildCodewords(version, bytes) {
+      const totalData = versionCapacity(version);
+      const bits = [];
+      const put = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+      put(0b0100, 4);
+      put(bytes.length, charCountBits(version));
+      for (const byte of bytes) put(byte, 8);
+      const maxBits = totalData * 8;
+      for (let i = 0; i < 4 && bits.length < maxBits; i++) bits.push(0);
+      while (bits.length % 8 !== 0) bits.push(0);
+      const dataCodewords = [];
+      for (let i = 0; i < bits.length; i += 8) {
+        let v = 0;
+        for (let j = 0; j < 8; j++) v = (v << 1) | bits[i + j];
+        dataCodewords.push(v);
+      }
+      const padBytes = [0xEC, 0x11];
+      let p = 0;
+      while (dataCodewords.length < totalData) dataCodewords.push(padBytes[p++ % 2]);
+
+      const rows = RS_BLOCKS_M[version - 1];
+      const blocks = [];
+      let offset = 0;
+      for (let g = 0; g < rows.length; g += 3) {
+        const count = rows[g], total = rows[g + 1], data = rows[g + 2];
+        const ecLen = total - data;
+        for (let b = 0; b < count; b++) {
+          const dataBlock = dataCodewords.slice(offset, offset + data);
+          offset += data;
+          blocks.push({ data: dataBlock, ec: rsRemainder(dataBlock, ecLen) });
+        }
+      }
+      const maxDataLen = Math.max(...blocks.map(b => b.data.length));
+      const maxEcLen = Math.max(...blocks.map(b => b.ec.length));
+      const out = [];
+      for (let i = 0; i < maxDataLen; i++) for (const blk of blocks) if (i < blk.data.length) out.push(blk.data[i]);
+      for (let i = 0; i < maxEcLen; i++) for (const blk of blocks) if (i < blk.ec.length) out.push(blk.ec[i]);
+      return out;
+    }
+
+    // Bullseye rule shared by finder (n=7) and alignment (n=5) patterns:
+    // black border, white ring at edge-distance 1, black center.
+    function bullseyeDark(r, c, n) {
+      const edgeDist = Math.min(r, c, n - 1 - r, n - 1 - c);
+      return edgeDist !== 1;
+    }
+    function placeFinder(m, isFn, row, col) {
+      for (let r = -1; r <= 7; r++) for (let c = -1; c <= 7; c++) {
+        const rr = row + r, cc = col + c;
+        if (rr < 0 || cc < 0 || rr >= m.length || cc >= m.length) continue;
+        const inner = r >= 0 && r <= 6 && c >= 0 && c <= 6;
+        m[rr][cc] = inner ? bullseyeDark(r, c, 7) : false;
+        isFn[rr][cc] = true;
+      }
+    }
+    function placeAlignment(m, isFn, version) {
+      const positions = ALIGNMENT_POSITIONS[version - 1];
+      if (!positions.length) return;
+      const size = m.length;
+      for (const row of positions) for (const col of positions) {
+        if ((row <= 8 && col <= 8) || (row <= 8 && col >= size - 9) || (row >= size - 9 && col <= 8)) continue;
+        for (let r = -2; r <= 2; r++) for (let c = -2; c <= 2; c++) {
+          m[row + r][col + c] = bullseyeDark(r + 2, c + 2, 5);
+          isFn[row + r][col + c] = true;
+        }
+      }
+    }
+    function placeTiming(m, isFn) {
+      const size = m.length;
+      for (let i = 8; i < size - 8; i++) {
+        if (!isFn[6][i]) { m[6][i] = i % 2 === 0; isFn[6][i] = true; }
+        if (!isFn[i][6]) { m[i][6] = i % 2 === 0; isFn[i][6] = true; }
+      }
+    }
+    function reserveFormatAreas(m, isFn) {
+      const size = m.length;
+      for (let i = 0; i <= 8; i++) {
+        if (!isFn[8][i]) { m[8][i] = false; isFn[8][i] = true; }
+        if (!isFn[i][8]) { m[i][8] = false; isFn[i][8] = true; }
+      }
+      for (let i = 0; i < 8; i++) {
+        m[8][size - 1 - i] = false; isFn[8][size - 1 - i] = true;
+        m[size - 1 - i][8] = false; isFn[size - 1 - i][8] = true;
+      }
+      m[size - 8][8] = true; // dark module
+    }
+    function reserveVersionAreas(m, isFn, version) {
+      if (version < 7) return;
+      const size = m.length;
+      for (let r = 0; r < 6; r++) for (let c = 0; c < 3; c++) {
+        m[r][size - 11 + c] = false; isFn[r][size - 11 + c] = true;
+        m[size - 11 + c][r] = false; isFn[size - 11 + c][r] = true;
+      }
+    }
+    const MASK_FUNCS = [
+      (r, c) => (r + c) % 2 === 0,
+      (r, c) => r % 2 === 0,
+      (r, c) => c % 3 === 0,
+      (r, c) => (r + c) % 3 === 0,
+      (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0,
+      (r, c) => ((r * c) % 2) + ((r * c) % 3) === 0,
+      (r, c) => (((r * c) % 2 + (r * c) % 3) % 2) === 0,
+      (r, c) => (((r + c) % 2 + (r * c) % 3) % 2) === 0
+    ];
+    function placeData(m, isFn, codewords) {
+      const size = m.length;
+      const bits = [];
+      for (const byte of codewords) for (let i = 7; i >= 0; i--) bits.push((byte >> i) & 1);
+      let bitIndex = 0;
+      let col = size - 1;
+      let goingUp = true;
+      while (col > 0) {
+        if (col === 6) col--;
+        for (let i = 0; i < size; i++) {
+          const row = goingUp ? size - 1 - i : i;
+          for (const cc of [col, col - 1]) {
+            if (!isFn[row][cc]) {
+              const bit = bitIndex < bits.length ? bits[bitIndex] : 0;
+              bitIndex++;
+              m[row][cc] = !!bit;
+            }
+          }
+        }
+        goingUp = !goingUp;
+        col -= 2;
+      }
+    }
+    function applyMask(m, isFn, maskIndex) {
+      const size = m.length;
+      const fn = MASK_FUNCS[maskIndex];
+      const out = m.map(row => row.slice());
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) {
+        if (!isFn[r][c] && fn(r, c)) out[r][c] = !out[r][c];
+      }
+      return out;
+    }
+    function bchRemainder(data, genDeg, gen) {
+      let val = data << genDeg;
+      const dataBits = 32 - Math.clz32(data || 1);
+      for (let i = dataBits - 1 + genDeg; i >= genDeg; i--) {
+        if ((val >> i) & 1) val ^= gen << (i - genDeg);
+      }
+      return val;
+    }
+    function formatBits(maskIndex) {
+      const data = (EC_LEVEL_BITS_M << 3) | maskIndex;
+      const gen = 0b10100110111; // degree 10
+      const rem = bchRemainder(data, 10, gen);
+      let full = (data << 10) | rem;
+      full ^= 0b101010000010010;
+      return full & 0x7FFF;
+    }
+    function versionBits(version) {
+      const gen = 0b1111100100101; // degree 12
+      const rem = bchRemainder(version, 12, gen);
+      return (version << 12) | rem;
+    }
+    function applyFormatInfo(m, maskIndex) {
+      const size = m.length;
+      const bits = formatBits(maskIndex);
+      const bit = (i) => (bits >> (14 - i)) & 1; // MSB-first
+      for (let i = 0; i <= 5; i++) m[8][i] = !!bit(i);
+      m[8][7] = !!bit(6);
+      m[8][8] = !!bit(7);
+      m[7][8] = !!bit(8);
+      for (let i = 9; i <= 14; i++) m[14 - i][8] = !!bit(i);
+      for (let i = 0; i <= 6; i++) m[size - 1 - i][8] = !!bit(i);
+      for (let k = 0; k <= 7; k++) m[8][size - 8 + k] = !!bit(7 + k);
+    }
+    function applyVersionInfo(m, version) {
+      if (version < 7) return;
+      const size = m.length;
+      const bits = versionBits(version);
+      const bit = (i) => (bits >> i) & 1; // LSB-first (differs from format info)
+      for (let i = 0; i < 18; i++) {
+        const row = Math.floor(i / 3);
+        const col = i % 3;
+        m[row][size - 11 + col] = !!bit(i);
+        m[size - 11 + col][row] = !!bit(i);
+      }
+    }
+    function penaltyScore(m) {
+      const size = m.length;
+      let score = 0;
+      for (let r = 0; r < size; r++) {
+        let run = 1;
+        for (let c = 1; c < size; c++) {
+          if (m[r][c] === m[r][c - 1]) run++;
+          else { if (run >= 5) score += 3 + (run - 5); run = 1; }
+        }
+        if (run >= 5) score += 3 + (run - 5);
+      }
+      for (let c = 0; c < size; c++) {
+        let run = 1;
+        for (let r = 1; r < size; r++) {
+          if (m[r][c] === m[r - 1][c]) run++;
+          else { if (run >= 5) score += 3 + (run - 5); run = 1; }
+        }
+        if (run >= 5) score += 3 + (run - 5);
+      }
+      for (let r = 0; r < size - 1; r++) for (let c = 0; c < size - 1; c++) {
+        const v = m[r][c];
+        if (v === m[r][c + 1] && v === m[r + 1][c] && v === m[r + 1][c + 1]) score += 3;
+      }
+      const pattern = [true, false, true, true, true, false, true];
+      function matchesAt(arr, i) {
+        for (let k = 0; k < 7; k++) if (arr[i + k] !== pattern[k]) return false;
+        return true;
+      }
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c <= size - 7; c++) {
+          if (matchesAt(m[r], c)) {
+            const before = c - 4 >= 0 && m[r].slice(c - 4, c).every(v => v === false);
+            const after = c + 11 <= size && m[r].slice(c + 7, c + 11).every(v => v === false);
+            if (before || after) score += 40;
+          }
+        }
+      }
+      for (let c = 0; c < size; c++) {
+        const col = m.map(row => row[c]);
+        for (let r = 0; r <= size - 7; r++) {
+          if (matchesAt(col, r)) {
+            const before = r - 4 >= 0 && col.slice(r - 4, r).every(v => v === false);
+            const after = r + 11 <= size && col.slice(r + 7, r + 11).every(v => v === false);
+            if (before || after) score += 40;
+          }
+        }
+      }
+      let dark = 0;
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (m[r][c]) dark++;
+      const percent = (dark * 100) / (size * size);
+      score += (Math.floor(Math.abs(percent - 50) / 5) / 5) * 10;
+      return score;
+    }
+
+    function encode(bytes) {
+      let version = 1;
+      for (; version <= 40; version++) {
+        const totalData = versionCapacity(version);
+        const bitsNeeded = 4 + charCountBits(version) + 8 * bytes.length;
+        if (Math.ceil(bitsNeeded / 8) <= totalData) break;
+      }
+      if (version > 40) return null;
+
+      const codewords = buildCodewords(version, bytes);
+      const size = 4 * version + 17;
+      const base = Array.from({ length: size }, () => new Array(size).fill(null));
+      const isFn = Array.from({ length: size }, () => new Array(size).fill(false));
+
+      placeFinder(base, isFn, 0, 0);
+      placeFinder(base, isFn, 0, size - 7);
+      placeFinder(base, isFn, size - 7, 0);
+      placeAlignment(base, isFn, version);
+      placeTiming(base, isFn);
+      reserveFormatAreas(base, isFn);
+      reserveVersionAreas(base, isFn, version);
+      placeData(base, isFn, codewords);
+
+      let best = null, bestScore = Infinity;
+      for (let mi = 0; mi < 8; mi++) {
+        const masked = applyMask(base, isFn, mi);
+        applyFormatInfo(masked, mi);
+        applyVersionInfo(masked, version);
+        const score = penaltyScore(masked);
+        if (score < bestScore) { bestScore = score; best = masked; }
+      }
+      return { version, size, modules: best };
+    }
+
+    return { encode };
+  })();
+
+  function drawQrToCanvas(canvas, result) {
+    const { size, modules } = result;
+    const quiet = 4;
+    const totalModules = size + quiet * 2;
+    const px = Math.max(2, Math.floor(512 / totalModules));
+    const pixelSize = totalModules * px;
+    canvas.width = pixelSize;
+    canvas.height = pixelSize;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, pixelSize, pixelSize);
+    ctx.fillStyle = '#000000';
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (modules[r][c]) {
+          ctx.fillRect((c + quiet) * px, (r + quiet) * px, px, px);
+        }
+      }
+    }
+  }
+
+  /* -------- Data-over-sound (Phase C, v5.0.0) --------
+     Homemade FSK modem over Web Audio (OscillatorNode to emit,
+     AnalyserNode-free Goertzel detection on raw samples to receive) —
+     no external library. A sustained carrier tone marks transmission
+     start (simpler and more robust to implement correctly than trying
+     to phase-lock onto alternating data bits), followed immediately by
+     a 16-bit length header, the payload bytes and an 8-bit checksum.
+     Deliberately "best effort", as documented in every language block
+     (soundCaveat): sensitive to ambient noise and speaker/mic quality,
+     not a guaranteed transport. */
+  const FSK_SYNC_FREQ = 1800;
+  const FSK_FREQ_0 = 1000;
+  const FSK_FREQ_1 = 1400;
+  const FSK_BIT_DURATION = 0.03;
+  const FSK_SYNC_DURATION = 0.3;
+
+  function fskGoertzelMagnitude(samples, offset, length, freq, sampleRate) {
+    const k = Math.round((length * freq) / sampleRate);
+    const omega = (2 * Math.PI * k) / length;
+    const coeff = 2 * Math.cos(omega);
+    let s0 = 0, s1 = 0, s2 = 0;
+    for (let i = 0; i < length; i++) {
+      s0 = samples[offset + i] + coeff * s1 - s2;
+      s2 = s1;
+      s1 = s0;
+    }
+    return Math.sqrt(s1 * s1 + s2 * s2 - coeff * s1 * s2);
+  }
+  function fskBytesToBits(bytes) {
+    const bits = [];
+    for (const b of bytes) for (let i = 7; i >= 0; i--) bits.push((b >> i) & 1);
+    return bits;
+  }
+  function fskBitsToBytes(bits) {
+    const out = [];
+    for (let i = 0; i + 8 <= bits.length; i += 8) {
+      let v = 0;
+      for (let j = 0; j < 8; j++) v = (v << 1) | bits[i + j];
+      out.push(v);
+    }
+    return out;
+  }
+  function fskBuildFramePayload(bytes) {
+    const len = bytes.length;
+    const checksum = bytes.reduce((a, b) => (a + b) & 0xFF, 0);
+    const header = [(len >> 8) & 0xFF, len & 0xFF];
+    return fskBytesToBits([...header, ...bytes, checksum]);
+  }
+  function fskPlayTones(audioCtx, bytes) {
+    const bits = fskBuildFramePayload(bytes);
+    const startTime = audioCtx.currentTime + 0.05;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.5;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(FSK_SYNC_FREQ, startTime);
+    let t = startTime + FSK_SYNC_DURATION;
+    for (const bit of bits) {
+      osc.frequency.setValueAtTime(bit ? FSK_FREQ_1 : FSK_FREQ_0, t);
+      t += FSK_BIT_DURATION;
+    }
+    osc.start(startTime);
+    osc.stop(t + 0.05);
+    return new Promise(resolve => { osc.onended = resolve; });
+  }
+  function fskFindSyncEnd(samples, sampleRate) {
+    const hop = Math.round(0.01 * sampleRate);
+    const win = Math.round(0.02 * sampleRate);
+    const minArmedHops = Math.round((FSK_SYNC_DURATION * 0.5) / 0.01);
+    const weakDebounce = 3;
+    let armedRun = 0, armed = false, weakStreak = 0, weakStartIdx = -1;
+    for (let pos = 0; pos + win <= samples.length; pos += hop) {
+      const mag = fskGoertzelMagnitude(samples, pos, win, FSK_SYNC_FREQ, sampleRate);
+      const energy = mag / win;
+      const strong = energy > 0.2;
+      if (strong) {
+        armedRun = Math.min(minArmedHops, armedRun + 1);
+        weakStreak = 0; weakStartIdx = -1;
+        if (armedRun >= minArmedHops) armed = true;
+      } else {
+        armedRun = Math.max(0, armedRun - 2);
+        if (armed) {
+          if (weakStreak === 0) weakStartIdx = pos;
+          weakStreak++;
+          if (weakStreak >= weakDebounce) return weakStartIdx;
+        }
+      }
+    }
+    return -1;
+  }
+  function fskDecodeFromSamples(samples, sampleRate) {
+    const start = fskFindSyncEnd(samples, sampleRate);
+    if (start < 0) return null;
+    const bitLen = Math.round(FSK_BIT_DURATION * sampleRate);
+    function readBit(bitIndex) {
+      const pos = start + bitIndex * bitLen;
+      if (pos + bitLen > samples.length) return null;
+      const m0 = fskGoertzelMagnitude(samples, pos, bitLen, FSK_FREQ_0, sampleRate);
+      const m1 = fskGoertzelMagnitude(samples, pos, bitLen, FSK_FREQ_1, sampleRate);
+      return m1 > m0 ? 1 : 0;
+    }
+    const headerBits = [];
+    for (let i = 0; i < 16; i++) {
+      const b = readBit(i);
+      if (b === null) return null;
+      headerBits.push(b);
+    }
+    const headerBytes = fskBitsToBytes(headerBits);
+    const len = (headerBytes[0] << 8) | headerBytes[1];
+    if (len > 100000) return null;
+    const totalBits = 16 + len * 8 + 8;
+    const allBits = headerBits.slice();
+    for (let i = 16; i < totalBits; i++) {
+      const b = readBit(i);
+      if (b === null) return null;
+      allBits.push(b);
+    }
+    const allBytes = fskBitsToBytes(allBits);
+    const payload = allBytes.slice(2, 2 + len);
+    const checksum = allBytes[2 + len];
+    const expected = payload.reduce((a, b) => (a + b) & 0xFF, 0);
+    if (checksum !== expected) return null;
+    return new Uint8Array(payload);
+  }
+
   async function encryptAesGcm(plain, password) {
     const enc = new TextEncoder();
     const cipherBytes = await encryptBytes(enc.encode(plain), password);
@@ -1426,8 +2364,21 @@
       if (useStrong.checked && window.crypto && crypto.subtle) {
         encryptBtn.disabled = true;
         setOutput(d.encrypting);
-        const cipher = await encryptAesGcm(text, key);
-        setOutput(cipher);
+        if (compressToggle.checked) {
+          // Phase C: compress the plaintext bytes before they reach the
+          // untouched encryptBytes() core — same pattern as the Phase B
+          // file wrapper, just a different plaintext byte layout.
+          const plainBytes = new TextEncoder().encode(text);
+          const { bytes: payload, savings } = compressPayloadBytes(plainBytes);
+          const cipherBytes = await encryptBytes(payload, key);
+          setOutput(bufToBase64(cipherBytes));
+          lastCompressionSavings = savings;
+          compressionSavingsText.textContent = d.compressionSavings.replace('{percent}', savings);
+          compressionSavingsText.hidden = false;
+        } else {
+          const cipher = await encryptAesGcm(text, key);
+          setOutput(cipher);
+        }
         showToast(d.encryptedAes);
       } else {
         const keyMap = generateSubstitution(key);
@@ -1454,8 +2405,15 @@
         decryptBtn.disabled = true;
         setOutput(d.decrypting);
         try {
-          const plain = await decryptAesGcm(text, key);
-          setOutput(plain);
+          if (compressToggle.checked) {
+            const blob = base64ToBuf(text);
+            const plainBytesWithFlag = await decryptBytes(blob, key);
+            const plainBytes = decompressPayloadBytes(plainBytesWithFlag);
+            setOutput(new TextDecoder().decode(plainBytes));
+          } else {
+            const plain = await decryptAesGcm(text, key);
+            setOutput(plain);
+          }
           showToast(d.decryptedAes);
         } catch (e) {
           setOutput('');
@@ -1635,6 +2593,14 @@
     fileInput.value = '';
     setSelectedFile(null);
 
+    // Phase C: the QR code and any in-progress sound listening are
+    // transient representations of the same sensitive output — clear them too.
+    stopSoundListening();
+    qrDisplay.hidden = true;
+    if (qrDownloadBlobUrl) { URL.revokeObjectURL(qrDownloadBlobUrl); qrDownloadBlobUrl = null; }
+    compressionSavingsText.hidden = true;
+    lastCompressionSavings = null;
+
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText('');
@@ -1643,6 +2609,111 @@
 
     keyInput.blur();
     inputArea.blur();
+  }
+
+  /* -------- Phase C actions (v5.0.0) — QR + sound, both operate on
+     whatever is currently shown in #output, not on the crypto core. -------- */
+  function qrGenerateAction() {
+    const d = t();
+    const text = hasResult ? output.textContent : '';
+    if (!text) { showToast(d.noInput); return; }
+    const bytes = Array.from(new TextEncoder().encode(text));
+    const result = QR.encode(bytes);
+    if (!result) { showToast(d.qrTooLong); return; }
+    drawQrToCanvas(qrCanvas, result);
+    qrCanvas.setAttribute('aria-label', d.qrScanHint);
+    qrDisplay.hidden = false;
+    qrCanvas.toBlob((blob) => {
+      if (!blob) return;
+      if (qrDownloadBlobUrl) URL.revokeObjectURL(qrDownloadBlobUrl);
+      qrDownloadBlobUrl = URL.createObjectURL(blob);
+      qrDownloadLink.href = qrDownloadBlobUrl;
+      qrDownloadLink.download = 'smart-enigma-qr.png';
+    });
+  }
+
+  async function soundEmitAction() {
+    const d = t();
+    const text = hasResult ? output.textContent : '';
+    if (!text) { showToast(d.noInput); return; }
+    try {
+      soundEmitBtn.disabled = true;
+      soundStatusText.hidden = false;
+      soundStatusText.textContent = d.soundEmitting;
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const bytes = Array.from(new TextEncoder().encode(text));
+      await fskPlayTones(audioCtx, bytes);
+      await audioCtx.close();
+    } catch (err) {
+      console.error(err);
+      showToast(d.genericError);
+    } finally {
+      soundEmitBtn.disabled = false;
+      soundStatusText.hidden = true;
+    }
+  }
+
+  function stopSoundListening() {
+    if (!soundListenState) return;
+    const { audioCtx, stream, processor, silentGain, pollTimer } = soundListenState;
+    clearInterval(pollTimer);
+    try { processor.disconnect(); } catch (e) {}
+    try { silentGain.disconnect(); } catch (e) {}
+    try { stream.getTracks().forEach(tr => tr.stop()); } catch (e) {}
+    try { audioCtx.close(); } catch (e) {}
+    soundListenState = null;
+    soundListenBtn.classList.remove('active');
+    soundStatusText.hidden = true;
+  }
+
+  async function soundListenAction() {
+    const d = t();
+    if (soundListenState) { stopSoundListening(); return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaStreamSource(stream);
+      const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+      // A muted gain node is required so the ScriptProcessor keeps firing
+      // in every browser, WITHOUT ever routing the live mic signal to the
+      // speakers (would otherwise risk audible feedback/echo).
+      const silentGain = audioCtx.createGain();
+      silentGain.gain.value = 0;
+      const chunks = [];
+      let totalSamples = 0;
+      const maxSeconds = 30;
+
+      function tryDecode() {
+        const full = new Float32Array(totalSamples);
+        let off = 0;
+        for (const c of chunks) { full.set(c, off); off += c.length; }
+        const decoded = fskDecodeFromSamples(full, audioCtx.sampleRate);
+        if (decoded) {
+          inputArea.value = new TextDecoder().decode(decoded);
+          stopSoundListening();
+        } else if (totalSamples / audioCtx.sampleRate > maxSeconds) {
+          showToast(d.soundDecodeFail);
+          stopSoundListening();
+        }
+      }
+
+      processor.onaudioprocess = (e) => {
+        chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+        totalSamples += e.inputBuffer.getChannelData(0).length;
+      };
+      source.connect(processor);
+      processor.connect(silentGain);
+      silentGain.connect(audioCtx.destination);
+
+      const pollTimer = setInterval(tryDecode, 400);
+      soundListenState = { audioCtx, stream, processor, silentGain, pollTimer };
+      soundListenBtn.classList.add('active');
+      soundStatusText.hidden = false;
+      soundStatusText.textContent = d.soundListening;
+    } catch (err) {
+      console.error(err);
+      showToast(d.soundMicPermission);
+    }
   }
 
   /* -------- Event wiring -------- */
@@ -1727,6 +2798,17 @@
   fileEncryptBtn.addEventListener('click', () => fileEncryptAction());
   fileDecryptBtn.addEventListener('click', () => fileDecryptAction());
 
+  // Phase C (v5.0.0) — offline transfer controls
+  compressToggle.addEventListener('change', () => {
+    if (!compressToggle.checked) {
+      compressionSavingsText.hidden = true;
+      lastCompressionSavings = null;
+    }
+  });
+  qrGenerateBtn.addEventListener('click', () => qrGenerateAction());
+  soundEmitBtn.addEventListener('click', () => soundEmitAction());
+  soundListenBtn.addEventListener('click', () => soundListenAction());
+
   toggleSecret.addEventListener('click', () => {
     const showing = keyInput.type === 'text';
     keyInput.type = showing ? 'password' : 'text';
@@ -1751,6 +2833,8 @@
   window.addEventListener('beforeunload', () => {
     try { keyInput.value = ''; } catch (e) {}
     try { if (fileResultBlobUrl) URL.revokeObjectURL(fileResultBlobUrl); } catch (e) {}
+    try { if (qrDownloadBlobUrl) URL.revokeObjectURL(qrDownloadBlobUrl); } catch (e) {}
+    try { stopSoundListening(); } catch (e) {}
   });
 
   document.addEventListener('DOMContentLoaded', () => {
