@@ -2274,7 +2274,8 @@
     const startTime = audioCtx.currentTime + 0.05;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    gain.gain.value = 0.5;
+    gain.gain.value = 0.85; // raised from 0.5 (v5.0.2) — real air + phone speaker
+    // attenuation is much higher than the synthetic loopback this was first tuned on.
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.frequency.setValueAtTime(FSK_SYNC_FREQ, startTime);
@@ -2293,16 +2294,26 @@
     const minArmedHops = Math.round((FSK_SYNC_DURATION * 0.5) / 0.01);
     const weakDebounce = 3;
     let armedRun = 0, armed = false, weakStreak = 0, weakStartIdx = -1;
+    // Fix (v5.0.2): the previous fixed threshold (0.2) was calibrated on
+    // a full-scale (±1) synthetic signal. Real air + phone-speaker
+    // attenuation makes the actual received amplitude unpredictable, so
+    // the threshold now adapts to the ambient noise floor instead of
+    // assuming a fixed absolute level.
+    let noiseFloor = 0.001;
+    const NOISE_RATIO = 5;   // sync tone must clear 5x the recent ambient energy
+    const ABS_MIN = 0.01;    // guards against false-arming on near-total silence
     for (let pos = 0; pos + win <= samples.length; pos += hop) {
       const mag = fskGoertzelMagnitude(samples, pos, win, FSK_SYNC_FREQ, sampleRate);
       const energy = mag / win;
-      const strong = energy > 0.2;
+      const threshold = Math.max(ABS_MIN, noiseFloor * NOISE_RATIO);
+      const strong = energy > threshold;
       if (strong) {
         armedRun = Math.min(minArmedHops, armedRun + 1);
         weakStreak = 0; weakStartIdx = -1;
         if (armedRun >= minArmedHops) armed = true;
       } else {
         armedRun = Math.max(0, armedRun - 2);
+        noiseFloor = noiseFloor * 0.9 + energy * 0.1;
         if (armed) {
           if (weakStreak === 0) weakStartIdx = pos;
           weakStreak++;
@@ -2692,7 +2703,25 @@
     const d = t();
     if (soundListenState) { stopSoundListening(); return; }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Fix (v5.0.2): plain {audio:true} lets the browser apply its
+      // default voice-call processing — echo cancellation, noise
+      // suppression and automatic gain control. Noise suppression in
+      // particular is tuned to remove exactly this kind of signal (a
+      // steady, non-speech-like tone), which is almost certainly why a
+      // real two-phone test failed even in a quiet room. Explicitly
+      // requesting raw/unprocessed audio fixes this on browsers that
+      // honor the constraint (most desktop and Android Chrome do).
+      // Some phones may still apply irreducible hardware-level
+      // processing the Web Audio API cannot turn off — kept as an
+      // honest limitation, not silently hidden.
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+          channelCount: 1
+        }
+      });
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const source = audioCtx.createMediaStreamSource(stream);
       const processor = audioCtx.createScriptProcessor(4096, 1, 1);
