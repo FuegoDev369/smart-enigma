@@ -1,0 +1,128 @@
+/* src/css/12-buttons.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   10. BUTTONS
+   -------------------------------------------------------------------------- */
+.btn {
+  background: var(--surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  font-size: clamp(0.82rem, 1.6vw, 0.98rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  white-space: normal;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 0.18) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+
+.btn:hover::before {
+  transform: translateX(120%);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-hover);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn .icon {
+  flex-shrink: 0;
+}
+
+.btn.primary,
+#decryptBtn {
+  background: linear-gradient(135deg, var(--cipher), var(--cipher-hover));
+  color: #fff;
+  border-color: var(--cipher);
+}
+
+.btn.primary:hover,
+#decryptBtn:hover {
+  filter: brightness(1.08);
+}
+
+#decryptBtn {
+  background: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--brass);
+}
+
+#decryptBtn:hover {
+  background: var(--brass-soft);
+}
+
+.btn.outline {
+  background: transparent;
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.btn.outline:hover {
+  background: var(--danger-color);
+  color: #fff;
+}
+
+.btn.small {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.85rem;
+  min-height: 38px;
+}
+
+.btn.tiny {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.75rem;
+  min-height: 30px;
+  border-radius: var(--radius-sm);
+}
+
+.btn:disabled::after {
+  content: '';
+  width: 15px;
+  height: 15px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+

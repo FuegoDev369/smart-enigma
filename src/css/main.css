@@ -1,0 +1,23 @@
+/* src/css/main.css
+   Point d'entree CSS — Ticket 2 du plan de restructuration.
+   Liste ordonnee des partiels, dans l'ordre exact du style.css original.
+   NE JAMAIS reordonner : l'ordre CSS a un impact en cas de specificite egale. */
+
+@import "01-tokens.css";
+@import "02-reset-base.css";
+@import "03-accessibility.css";
+@import "04-ambient-bg.css";
+@import "05-header-brand.css";
+@import "06-lang-theme-switch.css";
+@import "07-layout-container.css";
+@import "08-key-panel.css";
+@import "09-message-panel.css";
+@import "10-file-panel.css";
+@import "11-airgap-panel.css";
+@import "12-buttons.css";
+@import "13-output-terminal.css";
+@import "14-info-sections.css";
+@import "15-footer.css";
+@import "16-toast.css";
+@import "17-responsive.css";
+@import "18-motion-contrast-scrollbar.css";

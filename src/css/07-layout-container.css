@@ -1,0 +1,24 @@
+/* src/css/07-layout-container.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   7. MAIN CONTAINER
+   -------------------------------------------------------------------------- */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+  animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+section {
+  margin-bottom: var(--space-2xl);
+}
+

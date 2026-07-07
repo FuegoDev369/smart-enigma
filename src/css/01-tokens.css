@@ -1,0 +1,116 @@
+/* src/css/01-tokens.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* ==========================================================================
+   SMART ENIGMA — style.css
+   Art direction "Pro-Max": digital vault / Enigma-machine spirit.
+   Zero external dependencies, zero font/CDN, 100% inline & offline.
+   Multilingual font stack (9 languages) provided by SMART-ENIGMA-i18n.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   "Vault" palette: ink/parchment in light mode, obsidian/brass/cyan in dark mode.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand accents — brass (cipher-machine spirit) + cyan (digital encryption) */
+  --brass: #a9762c;
+  --brass-hover: #8f6222;
+  --brass-soft: rgb(169 118 44 / 0.14);
+  --cipher: #0f7a72;
+  --cipher-hover: #0b5f59;
+  --cipher-soft: rgb(15 122 114 / 0.14);
+  --danger-color: #b3261e;
+  --danger-soft: rgb(179 38 30 / 0.12);
+
+  /* Surfaces — ivory parchment */
+  --bg-color: #f6f1e4;
+  --bg-secondary: #efe7d3;
+  --bg-tertiary: #e7dcc0;
+  --surface: #fffdf8;
+  --surface-hover: #f6efdd;
+
+  /* Text — ink */
+  --text-primary: #1c1a15;
+  --text-secondary: #5c5642;
+  --text-muted: #8c8468;
+
+  /* Borders */
+  --border-color: #ddd0aa;
+  --border-hover: #c7b787;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(28 26 21 / 0.06);
+  --shadow-md: 0 6px 16px -4px rgb(28 26 21 / 0.14), 0 2px 6px -2px rgb(28 26 21 / 0.08);
+  --shadow-lg: 0 20px 40px -12px rgb(28 26 21 / 0.22), 0 8px 16px -8px rgb(28 26 21 / 0.14);
+  --shadow-glow: 0 0 0 3px var(--cipher-soft);
+  --shadow-glow-brass: 0 0 0 3px var(--brass-soft);
+
+  /* Radii */
+  --radius-sm: 0.4rem;
+  --radius-md: 0.65rem;
+  --radius-lg: 0.9rem;
+  --radius-xl: 1.25rem;
+  --radius-pill: 999px;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Typography — multilingual stack (Latin, Cyrillic, simplified CJK, Hangul)
+     provided by SMART-ENIGMA-i18n (see NOTES_TYPOGRAPHY.md), no CDN. */
+  --font-family: -apple-system, "Segoe UI", Roboto, "PingFang SC",
+    "Apple SD Gothic Neo", "Microsoft YaHei", "Malgun Gothic",
+    "Noto Sans SC", "Noto Sans KR", Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas,
+    "PingFang SC", "Apple SD Gothic Neo", "Microsoft YaHei", "Malgun Gothic",
+    "Noto Sans SC", "Noto Sans KR", "Courier New", monospace;
+
+  /* Transitions */
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Icons */
+  --icon-size: 1.15em;
+
+  color-scheme: light;
+}
+
+/* Dark mode — "obsidian vault": deep background, warm brass, cyan glow */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --brass: #d4af6a;
+  --brass-hover: #e6c383;
+  --brass-soft: rgb(212 175 106 / 0.16);
+  --cipher: #22d3ee;
+  --cipher-hover: #67e3f7;
+  --cipher-soft: rgb(34 211 238 / 0.16);
+  --danger-color: #ff6b6f;
+  --danger-soft: rgb(255 107 111 / 0.14);
+
+  --bg-color: #090b11;
+  --bg-secondary: #10141d;
+  --bg-tertiary: #171e2b;
+  --surface: #12161f;
+  --surface-hover: #1b2230;
+
+  --text-primary: #eef1f6;
+  --text-secondary: #a9b1c4;
+  --text-muted: #6b7386;
+
+  --border-color: #232b3b;
+  --border-hover: #313c53;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 6px 16px -4px rgb(0 0 0 / 0.5), 0 2px 6px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 20px 45px -12px rgb(0 0 0 / 0.65), 0 8px 20px -8px rgb(0 0 0 / 0.5);
+}
+

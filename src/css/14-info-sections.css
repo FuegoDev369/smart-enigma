@@ -1,0 +1,71 @@
+/* src/css/14-info-sections.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   12. INFO SECTIONS
+   -------------------------------------------------------------------------- */
+.info {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  border-left: 3px solid var(--brass);
+}
+
+.info-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.info-title .icon {
+  color: var(--brass);
+}
+
+.info p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  line-height: 1.7;
+}
+
+.info ol {
+  list-style: none;
+  counter-reset: step;
+  padding-left: 0;
+  color: var(--text-secondary);
+}
+
+.info ol li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 2.4rem;
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+  min-height: 1.7rem;
+  display: flex;
+  align-items: center;
+}
+
+.info ol li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--cipher-soft);
+  color: var(--cipher);
+  font-weight: 800;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+}
+

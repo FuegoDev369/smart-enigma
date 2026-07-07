@@ -1,0 +1,45 @@
+/* src/css/09-message-panel.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   9. MESSAGE PANEL / ACTIONS
+   -------------------------------------------------------------------------- */
+#inputArea {
+  width: 100%;
+  min-height: 190px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  font-size: 1rem;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: var(--transition-fast);
+  margin-bottom: var(--space-lg);
+}
+
+#inputArea:hover {
+  border-color: var(--border-hover);
+}
+
+#inputArea:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+  background: var(--surface);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.actions .btn {
+  flex: 1 1 9rem;
+}
+

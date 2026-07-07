@@ -1,0 +1,142 @@
+/* src/css/11-airgap-panel.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   9ter. OFFLINE TRANSFER PANEL (v5.0.0)
+   Same "vault" panel language as the panels above (corners, gradient
+   header). Three stacked sub-areas: compression toggle, QR code, sound.
+   -------------------------------------------------------------------------- */
+.airgap-block .panel-label {
+  margin-bottom: var(--space-sm);
+}
+
+.airgap-intro {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin-bottom: var(--space-lg);
+  max-width: 42rem;
+}
+
+.airgap-option {
+  margin-bottom: var(--space-sm);
+}
+
+.airgap-option .strong-option .icon {
+  color: var(--brass);
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.airgap-hint {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin-top: var(--space-xs);
+  margin-bottom: 0;
+}
+
+.airgap-savings {
+  display: inline-flex;
+  align-items: center;
+  margin-top: var(--space-sm);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full, 999px);
+  background: var(--cipher-soft);
+  color: var(--cipher);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.airgap-subsection {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.airgap-subtitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+.airgap-subtitle .icon {
+  color: var(--brass);
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.airgap-actions {
+  margin-bottom: 0;
+}
+
+.qr-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+#qrCanvas {
+  max-width: 100%;
+  height: auto;
+  background: #ffffff;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.qr-display .airgap-actions {
+  width: 100%;
+  max-width: 16rem;
+  display: flex;
+}
+
+.qr-display .airgap-actions .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.airgap-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full, 999px);
+  background: var(--cipher-soft);
+  color: var(--cipher);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.airgap-status::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: airgap-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes airgap-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+#soundListenBtn.active {
+  background: var(--cipher-soft);
+  border-color: var(--cipher);
+  color: var(--cipher);
+}
+

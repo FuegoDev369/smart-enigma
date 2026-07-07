@@ -1,0 +1,117 @@
+/* src/css/10-file-panel.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   9bis. FILE ENCRYPTION PANEL (v4.0.0)
+   Reuses the "vault" panel language (corners, brass/cipher gradient
+   header) already established for the key & message panels above.
+   -------------------------------------------------------------------------- */
+.file-block .panel-label {
+  margin-bottom: var(--space-lg);
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  min-height: 140px;
+}
+
+.dropzone:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.dropzone:focus-visible {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+.dropzone--active {
+  border-color: var(--cipher);
+  background: var(--cipher-soft);
+  box-shadow: var(--shadow-glow);
+}
+
+.dropzone-icon {
+  width: 2.2rem;
+  height: 2.2rem;
+  color: var(--brass);
+  opacity: 0.85;
+}
+
+.dropzone-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.92rem;
+  max-width: 32rem;
+}
+
+.file-size-hint {
+  margin-top: var(--space-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.file-selected .icon {
+  color: var(--cipher);
+  flex-shrink: 0;
+}
+
+.file-selected-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-actions {
+  margin-top: var(--space-lg);
+  margin-bottom: 0;
+}
+
+.file-result {
+  margin-top: var(--space-lg);
+  display: flex;
+}
+
+.file-result .btn {
+  width: 100%;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--brass), var(--brass-hover));
+  color: #fff;
+  border-color: var(--brass);
+}
+
+.file-result .btn:hover {
+  filter: brightness(1.08);
+}
+

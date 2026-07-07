@@ -1,0 +1,67 @@
+/* src/css/04-ambient-bg.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   4. DECORATIVE AMBIENT BACKGROUND
+   Soft glows + "circuit" grid — pure CSS, no external image.
+   Always aria-hidden on the HTML side: 100% decorative content.
+   -------------------------------------------------------------------------- */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient-grid {
+  position: absolute;
+  inset: -2px;
+  background-image:
+    linear-gradient(var(--border-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: 0.16;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 90%);
+}
+
+[data-theme="dark"] .ambient-grid {
+  opacity: 0.22;
+}
+
+.ambient-glow {
+  position: absolute;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.22;
+  will-change: transform;
+}
+
+.ambient-glow--brass {
+  top: -18vmax;
+  left: -12vmax;
+  background: radial-gradient(circle, var(--brass) 0%, transparent 70%);
+  animation: driftA 34s ease-in-out infinite alternate;
+}
+
+.ambient-glow--cipher {
+  bottom: -20vmax;
+  right: -14vmax;
+  background: radial-gradient(circle, var(--cipher) 0%, transparent 70%);
+  animation: driftB 28s ease-in-out infinite alternate;
+}
+
+@keyframes driftA {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(4vmax, 3vmax) scale(1.08); }
+}
+
+@keyframes driftB {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-3vmax, -4vmax) scale(1.1); }
+}
+

@@ -1,0 +1,342 @@
+/* src/css/08-key-panel.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   8. SECRET KEY PANEL — "vault" aesthetic
+   -------------------------------------------------------------------------- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brass), var(--cipher));
+}
+
+/* "Reticle" corners — a nod to security/precision */
+.panel-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-hover);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.panel-corner--tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
+.panel-corner--tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 4px 0 0; }
+.panel-corner--bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 4px; }
+.panel-corner--br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
+
+.panel-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+  font-size: 1.05rem;
+}
+
+.panel-label .icon {
+  color: var(--brass);
+}
+
+.key-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+#keyInput {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  padding-right: 2.9rem;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  transition: var(--transition-fast);
+  width: 100%;
+}
+
+#keyInput::placeholder {
+  color: var(--text-muted);
+  letter-spacing: normal;
+  font-family: var(--font-family);
+}
+
+#keyInput:hover {
+  border-color: var(--border-hover);
+}
+
+#keyInput:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+  background: var(--surface);
+}
+
+.visibility-toggle {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  display: flex;
+  transition: var(--transition-fast);
+}
+
+.visibility-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--cipher);
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.strong-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* "Rotor" switch for Max-Enigma, built on the existing checkbox */
+.switch {
+  position: relative;
+  display: inline-flex;
+  width: 2.6rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+}
+
+.switch-track::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-fast);
+}
+
+.switch input:checked ~ .switch-track {
+  background: var(--cipher);
+  border-color: var(--cipher);
+}
+
+.switch input:checked ~ .switch-track::before {
+  transform: translateX(1.1rem);
+  background: #fff;
+}
+
+.switch input:focus-visible ~ .switch-track {
+  box-shadow: var(--shadow-glow);
+}
+
+.btn.tiny.icon-only {
+  padding: var(--space-xs);
+  min-height: 28px;
+  width: 28px;
+}
+
+.warning {
+  margin-top: var(--space-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--brass-soft);
+  border: 1px solid var(--brass);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.warning .icon {
+  color: var(--brass);
+  margin-top: 0.15em;
+}
+
+/* -------- Key strength meter (v3.0.0) -------- */
+.strength-meter {
+  margin-top: var(--space-md);
+}
+
+.strength-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.strength-level {
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+}
+
+.strength-bar {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.strength-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: var(--radius-pill);
+  background: var(--danger-color);
+  transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+.strength-meter[data-level="medium"] .strength-fill {
+  background: var(--brass);
+}
+
+.strength-meter[data-level="strong"] .strength-fill {
+  background: var(--cipher);
+}
+
+.strength-meter[data-level="medium"] .strength-level {
+  color: var(--brass);
+}
+
+.strength-meter[data-level="strong"] .strength-level {
+  color: var(--cipher);
+}
+
+.strength-meter[data-level="weak"] .strength-level {
+  color: var(--danger-color);
+}
+
+.strength-hint {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* -------- Key fingerprint / safety number (v3.0.0) -------- */
+.fingerprint-block {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px dashed var(--border-color);
+}
+
+.fingerprint-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.fingerprint-title .icon {
+  color: var(--cipher);
+  width: 1rem;
+  height: 1rem;
+}
+
+.fingerprint-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  line-height: 1.5;
+}
+
+.fingerprint-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.fingerprint-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.6rem;
+  color: var(--cipher);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* -------- Panic-wipe discoverability hint (v3.0.0) -------- */
+.panic-hint {
+  margin-top: var(--space-md);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  opacity: 0.75;
+}
+

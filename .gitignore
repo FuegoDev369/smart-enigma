@@ -1,24 +1,7 @@
-# OS
-.DS_Store
-Thumbs.db
-
-# Editors
-.vscode/
-.idea/
-*.swp
-
-# Local test/debug artifacts
-*.log
-*.bak
-*.tmp
+node_modules/
+dist/
 CHANGELOG.md
-
-# Termux / Android
-/storage/
-.termux/
-
-# Archives produced by the packaging pipeline
-*.zip
-
-# Dev-Tools
+Points-d'attentions.md
 easy_git_commiter.py
+tests/MANUAL_REGRESSION_CHECKLIST.md
+src/css/CONVENTIONS.md

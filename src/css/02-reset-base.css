@@ -1,0 +1,58 @@
+/* src/css/02-reset-base.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   2. RESET & BASE
+   -------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  position: relative;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+  overflow-x: hidden;
+}
+
+svg.icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: -0.18em;
+}
+
+/* FIX v2.0.1: several components (.warning, .toast) declare their own
+   `display` (flex) to align icon + text. An author rule on `display`
+   wins over the browser's default stylesheet rule `[hidden] { display: none }`
+   even at equal specificity, which was silently neutralizing the `hidden`
+   attribute set by JS (e.g. the "Demo mode" warning stayed visible even
+   with Max-Enigma enabled). This rule restores `[hidden]` as the single
+   source of truth for every element in the project, regardless of any
+   `display` declared elsewhere. */
+[hidden] {
+  display: none !important;
+}
+
+/* Icon sprite — never displayed directly */
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+

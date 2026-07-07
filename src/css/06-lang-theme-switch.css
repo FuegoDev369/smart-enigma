@@ -1,0 +1,124 @@
+/* src/css/06-lang-theme-switch.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   6. LANGUAGE SELECTOR (9 languages) & THEME SWITCH
+   -------------------------------------------------------------------------- */
+.lang-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  padding: 0 0.55rem 0 0.7rem;
+  height: 2.5rem;
+  transition: var(--transition-fast);
+  color: var(--text-secondary);
+}
+
+.lang-chip:hover {
+  border-color: var(--border-hover);
+}
+
+.lang-chip:focus-within {
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+.lang-chip .icon-globe {
+  color: var(--cipher);
+}
+
+.lang-chip .icon-chevron {
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+
+#langSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  max-width: 8.5rem;
+  padding: 0.5rem 0.15rem;
+}
+
+#langSelect:focus {
+  outline: none;
+}
+
+/* The native <select> remains the source of truth for accessibility:
+   no custom combobox is re-created, just a visual wrapper. */
+#langSelect option {
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+}
+
+.theme-switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border-color);
+  background: var(--surface);
+  transition: var(--transition-fast);
+  color: var(--brass);
+}
+
+.theme-switch:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.theme-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-switch:focus-within {
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+.theme-switch .icon {
+  position: absolute;
+  transition: var(--transition-normal);
+}
+
+.theme-switch .icon-sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+  color: var(--brass);
+}
+
+.theme-switch .icon-moon {
+  opacity: 0;
+  transform: rotate(-60deg) scale(0.5);
+  color: var(--cipher);
+}
+
+.theme-switch input:checked ~ .icon-sun {
+  opacity: 0;
+  transform: rotate(60deg) scale(0.5);
+}
+
+.theme-switch input:checked ~ .icon-moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+

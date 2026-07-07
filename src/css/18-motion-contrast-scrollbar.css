@@ -1,0 +1,71 @@
+/* src/css/18-motion-contrast-scrollbar.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   16. MOTION, CONTRAST, PRINT
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ambient-glow,
+  .brand-rotor,
+  .brand-rotor .rotor-ring--inner {
+    animation: none !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #000000;
+    --text-secondary: var(--text-primary);
+  }
+
+  [data-theme="dark"] {
+    --border-color: #ffffff;
+  }
+
+  .ambient-grid,
+  .ambient-glow {
+    display: none;
+  }
+
+  .brand-title {
+    -webkit-text-fill-color: initial;
+    background: none;
+    color: var(--text-primary);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   17. SCROLLBAR (progressive enhancement, non-blocking)
+   -------------------------------------------------------------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: var(--radius-pill);
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}

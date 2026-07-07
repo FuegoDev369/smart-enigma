@@ -1,0 +1,104 @@
+/* src/css/17-responsive.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   15. RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-md);
+  }
+
+  .topbar {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .controls {
+    gap: var(--space-xs);
+  }
+
+  #langSelect {
+    max-width: 5.7rem;
+  }
+
+  .panel {
+    padding: var(--space-lg);
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+
+  .output-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .output-actions .btn {
+    width: 100%;
+  }
+
+  .options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .file-actions {
+    flex-direction: column;
+  }
+
+  .file-actions .btn {
+    width: 100%;
+  }
+
+  .toast {
+    bottom: var(--space-md);
+    right: var(--space-md);
+    left: var(--space-md);
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-sm);
+  }
+
+  .brand-title {
+    font-size: 0.95rem;
+  }
+
+  .brand-mark {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+
+  .panel,
+  .info {
+    padding: var(--space-md);
+  }
+
+  #inputArea {
+    min-height: 150px;
+  }
+
+  .dropzone {
+    padding: var(--space-lg) var(--space-md);
+    min-height: 110px;
+  }
+
+  .lang-chip {
+    padding: 0 0.4rem 0 0.55rem;
+  }
+}
+

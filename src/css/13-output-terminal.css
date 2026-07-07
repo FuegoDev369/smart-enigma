@@ -1,0 +1,81 @@
+/* src/css/13-output-terminal.css
+   Extrait mecanique de style.css (Ticket 2 du plan de restructuration).
+   Contenu deplace tel quel, sans modification de valeur, selecteur ou propriete.
+   Ordre de chargement fixe par src/css/main.css. */
+
+/* --------------------------------------------------------------------------
+   11. OUTPUT / RESULT TERMINAL
+   -------------------------------------------------------------------------- */
+h3.result-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+h3.result-title .icon {
+  color: var(--cipher);
+}
+
+#output {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 110px;
+  margin-bottom: var(--space-md);
+  position: relative;
+  transition: var(--transition-fast);
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgb(0 0 0 / 0.015) 0px,
+    rgb(0 0 0 / 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+[data-theme="dark"] #output {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgb(255 255 255 / 0.02) 0px,
+    rgb(255 255 255 / 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+#output:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+#output.placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  font-family: var(--font-family);
+}
+
+.output-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-label {
+  display: inline;
+}
+
