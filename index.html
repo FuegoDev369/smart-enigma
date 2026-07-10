@@ -131,6 +131,24 @@
         <path d="M8.5 15.5 a5 5 0 0 1 0 -7 M15.5 15.5 a5 5 0 0 0 0 -7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         <path d="M5.3 18.7 a9.5 9.5 0 0 1 0 -13.4 M18.7 18.7 a9.5 9.5 0 0 0 0 -13.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </symbol>
+      <!-- Phase D (v6.0.0) — multi-party icons, same hand-drawn 24x24 vocabulary -->
+      <symbol id="icon-key-shards" viewBox="0 0 24 24">
+        <circle cx="7" cy="16" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M9.4 13.6 L12 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="12.7" cy="10.3" r="0.9" fill="currentColor"/>
+        <path d="M13.6 9.4 L15.6 7.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="16.3" cy="6.7" r="0.9" fill="currentColor"/>
+        <path d="M17.2 5.8 L19.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="icon-cascade" viewBox="0 0 24 24">
+        <circle cx="5.5" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M5.5 9.2 V10.2 M5.5 13.8 V14.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 9.2 V10.2 M12 13.8 V14.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <circle cx="18.5" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M18.5 9.2 V10.2 M18.5 13.8 V14.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M3 5 H21" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="1 2.4"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -425,6 +443,100 @@
         <p class="airgap-hint" id="soundMicPermissionText"></p>
         <p class="airgap-hint" id="soundCaveatText"></p>
       </div>
+    </section>
+
+    <!-- Phase D (v6.0.0) — Multi-party: Shamir key splitting (M-of-N).
+         Splits/reconstructs the value in #keyInput; never touches the
+         crypto core (deriveKey/encryptBytes/decryptBytes untouched) —
+         the actual encryption still runs through that same core. -->
+    <section class="panel shamir-block" aria-labelledby="shamirSectionLabelText">
+      <span class="panel-corner panel-corner--tl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--tr" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--br" aria-hidden="true"></span>
+
+      <p class="panel-label">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-key-shards"></use></svg>
+        <span id="shamirSectionLabelText"></span>
+      </p>
+      <p class="multiparty-intro" id="shamirIntroText"></p>
+
+      <div class="shamir-params">
+        <label class="shamir-param">
+          <span id="shamirThresholdLabelText"></span>
+          <input type="number" id="shamirThresholdInput" class="number-input" min="2" max="255" value="2" inputmode="numeric" />
+        </label>
+        <label class="shamir-param">
+          <span id="shamirSharesLabelText"></span>
+          <input type="number" id="shamirSharesInput" class="number-input" min="2" max="255" value="3" inputmode="numeric" />
+        </label>
+      </div>
+
+      <div class="actions multiparty-actions" role="toolbar" aria-label="Shamir split action">
+        <button id="shamirSplitBtn" class="btn primary">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-key-shards"></use></svg>
+          <span class="btn-label" id="shamirSplitBtnText"></span>
+        </button>
+      </div>
+
+      <div class="shamir-shares-output" id="shamirSharesOutput" hidden aria-live="polite"></div>
+
+      <div class="multiparty-subsection">
+        <textarea id="shamirCombineTextarea" class="multiparty-textarea" rows="4"></textarea>
+        <div class="actions multiparty-actions" role="toolbar" aria-label="Shamir combine action">
+          <button id="shamirCombineBtn" class="btn">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-key"></use></svg>
+            <span class="btn-label" id="shamirCombineBtnText"></span>
+          </button>
+        </div>
+      </div>
+
+      <p class="warning">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-alert-triangle"></use></svg>
+        <span id="shamirCaveatText"></span>
+      </p>
+    </section>
+
+    <!-- Phase D (v6.0.0) — Multi-party: cascading rotors (sequential
+         multi-key encryption). Reuses encryptBytes/decryptBytes in a
+         loop, in src/js/features/cascade-actions.js — no new
+         cryptographic algorithm, crypto core untouched. -->
+    <section class="panel cascade-block" aria-labelledby="cascadeSectionLabelText">
+      <span class="panel-corner panel-corner--tl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--tr" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--bl" aria-hidden="true"></span>
+      <span class="panel-corner panel-corner--br" aria-hidden="true"></span>
+
+      <p class="panel-label">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-cascade"></use></svg>
+        <span id="cascadeSectionLabelText"></span>
+      </p>
+      <p class="multiparty-intro" id="cascadeIntroText"></p>
+
+      <div class="cascade-keys-list" id="cascadeKeysList"></div>
+
+      <div class="actions multiparty-actions" role="toolbar" aria-label="Cascade key list actions">
+        <button type="button" id="cascadeAddKeyBtn" class="btn small">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-key"></use></svg>
+          <span class="btn-label" id="cascadeAddKeyBtnText"></span>
+        </button>
+      </div>
+      <p class="airgap-hint" id="cascadeOrderHintText"></p>
+
+      <textarea id="cascadeInputArea" class="multiparty-textarea" rows="4"></textarea>
+
+      <div class="actions" role="toolbar" aria-label="Cascade actions">
+        <button id="cascadeEncryptBtn" class="btn primary">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-lock-closed"></use></svg>
+          <span class="btn-label" id="cascadeEncryptBtnText"></span>
+        </button>
+        <button id="cascadeDecryptBtn" class="btn">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-lock-open"></use></svg>
+          <span class="btn-label" id="cascadeDecryptBtnText"></span>
+        </button>
+      </div>
+
+      <pre id="cascadeOutput" class="cascade-output placeholder" tabindex="0" aria-live="polite"></pre>
     </section>
 
     <hr />

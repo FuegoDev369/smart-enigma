@@ -90,5 +90,29 @@ export default {
   soundListening: "수신 중…",
   soundMicPermission: "소리 시퀀스를 수신하려면 마이크 접근 권한이 필요합니다. 오디오는 이 기기에서만 처리되며 어디로도 전송되지 않습니다.",
   soundDecodeFail: "소리를 디코딩할 수 없습니다. 주변 소음이나 음원과의 거리가 원인일 수 있습니다.",
-  soundCaveat: "이 방식은 최선을 다하는(best-effort) 방식으로, 주변 소음과 마이크/스피커 품질에 민감하며 전송을 보장하는 프로토콜이 아닙니다."
+  soundCaveat: "이 방식은 최선을 다하는(best-effort) 방식으로, 주변 소음과 마이크/스피커 품질에 민감하며 전송을 보장하는 프로토콜이 아닙니다.",
+
+  shamirSectionLabel: "공유 키 (Shamir)",
+    shamirIntro: "키를 여러 조각으로 분할합니다. 재구성하려면 최소 개수의 조각이 필요하므로 한 사람이 단독으로 처리할 수 없습니다.",
+    shamirThresholdLabel: "재구성에 필요한 조각 수(임계값)",
+    shamirSharesLabel: "생성할 전체 조각 수",
+    shamirSplitAction: "키 분할",
+    shamirCombineAction: "조각 결합",
+    shamirShareLabel: "조각 {index}",
+    shamirShareCopyAria: "이 조각 복사",
+    shamirSplitDone: "키가 성공적으로 분할되었습니다. 조각을 안전하게 배포하세요.",
+    shamirCombineDone: "키가 성공적으로 재구성되었습니다.",
+    shamirNeedMore: "이 키를 재구성하려면 최소 {needed}개의 조각이 필요합니다.",
+    shamirCombineFail: "결합에 실패했습니다. 조각이 유효하지 않거나 서로 일치하지 않습니다.",
+    shamirCaveat: "임계값 이상으로 조각을 분실하면 키는 영구적으로 복구 불가능하게 손실됩니다. 어떠한 방법으로도 복구할 수 없습니다.",
+
+    cascadeSectionLabel: "캐스케이드 로터",
+    cascadeIntro: "여러 키로 텍스트를 순차적으로 암호화합니다. 복호화하려면 동일한 키를 정확히 역순으로 사용해야 합니다.",
+    cascadeAddKeyAction: "키 추가",
+    cascadeRemoveKeyAria: "캐스케이드에서 이 키 제거",
+    cascadeOrderHint: "암호화 순서와 정확히 반대 순서로 키를 사용하여 복호화하세요.",
+    cascadeMinKeys: "캐스케이드 암호화에는 최소 두 개의 키가 필요합니다.",
+    cascadeEncryptDone: "캐스케이드 암호화가 완료되었습니다.",
+    cascadeDecryptDone: "캐스케이드 복호화가 완료되었습니다.",
+    cascadeDecryptFail: "캐스케이드 복호화에 실패했습니다. 키의 순서와 값을 확인하거나, 텍스트가 손상되었을 수 있습니다."
 };

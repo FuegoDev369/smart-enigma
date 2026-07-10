@@ -90,5 +90,29 @@ export default {
   soundListening: "正在接收…",
   soundMicPermission: "接收声音序列需要麦克风权限。音频仅在本设备本地处理，绝不会被发送到任何地方。",
   soundDecodeFail: "无法解码声音，环境噪音或与声源的距离可能是原因。",
-  soundCaveat: "此方法为尽力而为，容易受环境噪音及麦克风/扬声器质量影响，并非可靠保证的传输方式。"
+  soundCaveat: "此方法为尽力而为，容易受环境噪音及麦克风/扬声器质量影响，并非可靠保证的传输方式。",
+
+  shamirSectionLabel: "共享密钥（Shamir）",
+    shamirIntro: "将密钥拆分为多个分片。需要达到最低数量的分片才能重建密钥，确保无人能单独操作。",
+    shamirThresholdLabel: "重建所需的分片数量（阈值）",
+    shamirSharesLabel: "生成的分片总数",
+    shamirSplitAction: "拆分密钥",
+    shamirCombineAction: "合并分片",
+    shamirShareLabel: "分片 {index}",
+    shamirShareCopyAria: "复制此分片",
+    shamirSplitDone: "密钥拆分成功。请安全分发各分片。",
+    shamirCombineDone: "密钥重建成功。",
+    shamirNeedMore: "重建此密钥至少需要 {needed} 个分片。",
+    shamirCombineFail: "合并失败。分片无效或彼此不匹配。",
+    shamirCaveat: "若丢失的分片数量超过阈值允许的范围，密钥将永久且无法恢复地丢失，没有任何找回方式。",
+
+    cascadeSectionLabel: "级联转子",
+    cascadeIntro: "使用多个密钥依次加密文本。解密需要按完全相反的顺序使用相同的密钥。",
+    cascadeAddKeyAction: "添加密钥",
+    cascadeRemoveKeyAria: "从级联中移除此密钥",
+    cascadeOrderHint: "解密时请按加密顺序的完全相反顺序使用密钥。",
+    cascadeMinKeys: "级联加密至少需要两个密钥。",
+    cascadeEncryptDone: "级联加密完成。",
+    cascadeDecryptDone: "级联解密完成。",
+    cascadeDecryptFail: "级联解密失败。请检查密钥顺序和数值，文本也可能已损坏。"
 };

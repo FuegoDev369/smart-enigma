@@ -90,5 +90,29 @@ export default {
   soundListening: "Ouvindo…",
   soundMicPermission: "É necessário acesso ao microfone para ouvir a sequência sonora. O áudio é processado inteiramente neste dispositivo e nunca é enviado a lugar nenhum.",
   soundDecodeFail: "Não foi possível decodificar o som. Ruído ambiente ou distância da fonte podem estar interferindo.",
-  soundCaveat: "Este método funciona em regime de melhor esforço — é sensível a ruído ambiente e à qualidade do microfone/alto-falante. Não é um protocolo de transmissão garantido."
+  soundCaveat: "Este método funciona em regime de melhor esforço — é sensível a ruído ambiente e à qualidade do microfone/alto-falante. Não é um protocolo de transmissão garantido.",
+
+  shamirSectionLabel: "Chave compartilhada (Shamir)",
+    shamirIntro: "Divida sua chave em várias partes. É necessário um número mínimo de partes para reconstruí-la, de modo que nenhuma pessoa sozinha possa agir.",
+    shamirThresholdLabel: "Partes necessárias para reconstruir (limite mínimo)",
+    shamirSharesLabel: "Número total de partes a gerar",
+    shamirSplitAction: "Dividir chave",
+    shamirCombineAction: "Combinar partes",
+    shamirShareLabel: "Parte {index}",
+    shamirShareCopyAria: "Copiar esta parte",
+    shamirSplitDone: "Chave dividida com sucesso. Distribua as partes com segurança.",
+    shamirCombineDone: "Chave reconstruída com sucesso.",
+    shamirNeedMore: "São necessárias pelo menos {needed} partes para reconstruir esta chave.",
+    shamirCombineFail: "Falha ao combinar. As partes são inválidas ou não correspondem entre si.",
+    shamirCaveat: "Se você perder mais partes do que o limite mínimo permite, a chave será perdida de forma permanente e irrecuperável. Não há como recuperá-la.",
+
+    cascadeSectionLabel: "Rotores em cascata",
+    cascadeIntro: "Cifre seu texto sucessivamente com várias chaves. A decifração exige as mesmas chaves na ordem exatamente inversa.",
+    cascadeAddKeyAction: "Adicionar chave",
+    cascadeRemoveKeyAria: "Remover esta chave da cascata",
+    cascadeOrderHint: "Decifre usando as chaves na ordem exatamente inversa à da cifragem.",
+    cascadeMinKeys: "São necessárias pelo menos duas chaves para a cifragem em cascata.",
+    cascadeEncryptDone: "Cifragem em cascata concluída.",
+    cascadeDecryptDone: "Decifração em cascata concluída.",
+    cascadeDecryptFail: "Falha na decifração em cascata. Verifique a ordem e os valores das chaves, ou o texto pode estar corrompido."
 };

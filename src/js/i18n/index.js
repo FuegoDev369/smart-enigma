@@ -16,6 +16,8 @@
 import en from './locales/en.js';
 import { state } from '../state.js';
 import { refreshKeyStrength } from '../features/key-strength.js';
+import { retranslateShamirShares } from '../features/shamir-actions.js';
+import { retranslateCascadeRows } from '../features/cascade-actions.js';
 import {
   $, html, langSelect, themeToggle, keyLabelText, keyInput, copyKeyBtn,
   clearKeyBtn, toggleSecret, strongLabel, weakWarningText, inputArea,
@@ -29,7 +31,12 @@ import {
   compressToggleLabelText, compressionHintText, compressionSavingsText,
   qrSectionLabelText, qrGenerateBtnText, qrDownloadBtnText, qrScanHintText,
   soundSectionLabelText, soundEmitBtnText, soundListenBtnText,
-  soundMicPermissionText, soundCaveatText
+  soundMicPermissionText, soundCaveatText,
+  shamirSectionLabelText, shamirIntroText, shamirThresholdLabelText,
+  shamirSharesLabelText, shamirSplitBtnText, shamirCombineBtnText,
+  shamirCaveatText, cascadeSectionLabelText, cascadeIntroText,
+  cascadeAddKeyBtnText, cascadeOrderHintText, cascadeEncryptBtnText,
+  cascadeDecryptBtnText, cascadeInputArea, cascadeOutput
 } from '../dom.js';
 
 // `en` is always resolved (guaranteed fallback). The other 8 languages
@@ -179,4 +186,28 @@ export async function translateUI(lang) {
   soundListenBtnText.textContent = d.soundListenAction;
   soundMicPermissionText.textContent = d.soundMicPermission;
   soundCaveatText.textContent = d.soundCaveat;
+
+  // Shamir key splitting (Phase D, v6.0.0)
+  shamirSectionLabelText.textContent = d.shamirSectionLabel;
+  shamirIntroText.textContent = d.shamirIntro;
+  shamirThresholdLabelText.textContent = d.shamirThresholdLabel;
+  shamirSharesLabelText.textContent = d.shamirSharesLabel;
+  shamirSplitBtnText.textContent = d.shamirSplitAction;
+  shamirCombineBtnText.textContent = d.shamirCombineAction;
+  shamirCaveatText.textContent = d.shamirCaveat;
+  retranslateShamirShares();
+
+  // Cascading rotors (Phase D, v6.0.0)
+  cascadeSectionLabelText.textContent = d.cascadeSectionLabel;
+  cascadeIntroText.textContent = d.cascadeIntro;
+  cascadeAddKeyBtnText.textContent = d.cascadeAddKeyAction;
+  cascadeOrderHintText.textContent = d.cascadeOrderHint;
+  cascadeEncryptBtnText.textContent = d.buttonEncrypt;
+  cascadeDecryptBtnText.textContent = d.buttonDecrypt;
+  cascadeInputArea.placeholder = d.inputPlaceholder;
+  if (!cascadeOutput.textContent || cascadeOutput.classList.contains('placeholder')) {
+    cascadeOutput.textContent = d.outputPlaceholder;
+    cascadeOutput.classList.add('placeholder');
+  }
+  retranslateCascadeRows();
 }

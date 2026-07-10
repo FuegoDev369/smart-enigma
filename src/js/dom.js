@@ -94,3 +94,32 @@ export const soundListenBtnText = $('#soundListenBtnText');
 export const soundStatusText = $('#soundStatusText');
 export const soundMicPermissionText = $('#soundMicPermissionText');
 export const soundCaveatText = $('#soundCaveatText');
+
+// Shamir key splitting (Phase D, v6.0.0)
+export const shamirSectionLabelText = $('#shamirSectionLabelText');
+export const shamirIntroText = $('#shamirIntroText');
+export const shamirThresholdLabelText = $('#shamirThresholdLabelText');
+export const shamirThresholdInput = $('#shamirThresholdInput');
+export const shamirSharesLabelText = $('#shamirSharesLabelText');
+export const shamirSharesInput = $('#shamirSharesInput');
+export const shamirSplitBtn = $('#shamirSplitBtn');
+export const shamirSplitBtnText = $('#shamirSplitBtnText');
+export const shamirSharesOutput = $('#shamirSharesOutput');
+export const shamirCombineTextarea = $('#shamirCombineTextarea');
+export const shamirCombineBtn = $('#shamirCombineBtn');
+export const shamirCombineBtnText = $('#shamirCombineBtnText');
+export const shamirCaveatText = $('#shamirCaveatText');
+
+// Cascading rotors (Phase D, v6.0.0)
+export const cascadeSectionLabelText = $('#cascadeSectionLabelText');
+export const cascadeIntroText = $('#cascadeIntroText');
+export const cascadeKeysList = $('#cascadeKeysList');
+export const cascadeAddKeyBtn = $('#cascadeAddKeyBtn');
+export const cascadeAddKeyBtnText = $('#cascadeAddKeyBtnText');
+export const cascadeOrderHintText = $('#cascadeOrderHintText');
+export const cascadeInputArea = $('#cascadeInputArea');
+export const cascadeEncryptBtn = $('#cascadeEncryptBtn');
+export const cascadeEncryptBtnText = $('#cascadeEncryptBtnText');
+export const cascadeDecryptBtn = $('#cascadeDecryptBtn');
+export const cascadeDecryptBtnText = $('#cascadeDecryptBtnText');
+export const cascadeOutput = $('#cascadeOutput');

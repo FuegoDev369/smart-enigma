@@ -1,0 +1,196 @@
+/* src/css/19-multiparty-panel.css
+   New partial (Phase D, v6.0.0). Same "vault" panel language as the
+   panels in 08/10/11 (corners, gradient header, .panel/.warning/.actions
+   reused as-is) — no new panel primitives invented, only the
+   Shamir/cascade-specific pieces that don't exist yet. */
+
+/* --------------------------------------------------------------------------
+   16. MULTI-PARTY PANELS (Shamir key splitting + cascading rotors, v6.0.0)
+   -------------------------------------------------------------------------- */
+.shamir-block .panel-label,
+.cascade-block .panel-label {
+  margin-bottom: var(--space-sm);
+}
+
+.multiparty-intro {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin-bottom: var(--space-lg);
+  max-width: 42rem;
+}
+
+.multiparty-subsection {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.multiparty-textarea {
+  width: 100%;
+  min-height: 110px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  font-size: 0.92rem;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: var(--transition-fast);
+  margin-bottom: var(--space-md);
+}
+
+.multiparty-textarea:hover {
+  border-color: var(--border-hover);
+}
+
+.multiparty-textarea:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+  background: var(--surface);
+}
+
+/* -------- Shamir: threshold/shares number inputs -------- */
+.shamir-params {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.shamir-param {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1 1 12rem;
+}
+
+.number-input {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.95rem;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  transition: var(--transition-fast);
+  width: 100%;
+}
+
+.number-input:hover {
+  border-color: var(--border-hover);
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+  background: var(--surface);
+}
+
+/* -------- Shamir: generated share rows -------- */
+.shamir-shares-output {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.shamir-share-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.shamir-share-label {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--brass);
+  white-space: nowrap;
+}
+
+.shamir-share-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  overflow-wrap: break-word;
+}
+
+/* -------- Cascading rotors: dynamic key list -------- */
+.cascade-keys-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.cascade-key-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.cascade-key-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  transition: var(--transition-fast);
+}
+
+.cascade-key-input:hover {
+  border-color: var(--border-hover);
+}
+
+.cascade-key-input:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+  background: var(--surface);
+}
+
+.cascade-output {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 90px;
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+  transition: var(--transition-fast);
+}
+
+.cascade-output:focus {
+  outline: none;
+  border-color: var(--cipher);
+  box-shadow: var(--shadow-glow);
+}
+
+.cascade-output.placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  font-family: var(--font-family);
+}

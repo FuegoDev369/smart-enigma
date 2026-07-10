@@ -5,3 +5,5 @@ Points-d'attentions.md
 easy_git_commiter.py
 tests/MANUAL_REGRESSION_CHECKLIST.md
 src/css/CONVENTIONS.md
+# Auto-backups
+.git_backups/

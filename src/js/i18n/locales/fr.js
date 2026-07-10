@@ -90,5 +90,29 @@ export default {
   soundListening: "Écoute en cours…",
   soundMicPermission: "L'accès au microphone est nécessaire pour écouter la séquence sonore. L'audio est traité entièrement sur cet appareil et n'est jamais envoyé ailleurs.",
   soundDecodeFail: "Impossible de décoder le son. Le bruit ambiant ou la distance par rapport à la source peuvent en être la cause.",
-  soundCaveat: "Cette méthode est fournie « au mieux » — sensible au bruit ambiant et à la qualité du micro/haut-parleur. Ce n'est pas un protocole de transmission garanti."
+  soundCaveat: "Cette méthode est fournie « au mieux » — sensible au bruit ambiant et à la qualité du micro/haut-parleur. Ce n'est pas un protocole de transmission garanti.",
+
+  shamirSectionLabel: "Clé partagée (Shamir)",
+    shamirIntro: "Scindez votre clé en plusieurs parts. Un nombre minimum de parts est nécessaire pour la reconstituer, afin qu'aucune personne seule ne puisse agir.",
+    shamirThresholdLabel: "Nombre de parts requises pour reconstituer (seuil)",
+    shamirSharesLabel: "Nombre total de parts à générer",
+    shamirSplitAction: "Scinder la clé",
+    shamirCombineAction: "Recombiner les parts",
+    shamirShareLabel: "Part {index}",
+    shamirShareCopyAria: "Copier cette part",
+    shamirSplitDone: "Clé scindée avec succès. Distribuez les parts en toute sécurité.",
+    shamirCombineDone: "Clé reconstituée avec succès.",
+    shamirNeedMore: "Au moins {needed} parts sont nécessaires pour reconstituer cette clé.",
+    shamirCombineFail: "Échec de la recombinaison. Les parts sont invalides ou ne correspondent pas entre elles.",
+    shamirCaveat: "Si vous perdez plus de parts que le seuil ne le permet, la clé est perdue définitivement et de façon irrécupérable. Aucune récupération n'est possible.",
+
+    cascadeSectionLabel: "Rotors en cascade",
+    cascadeIntro: "Chiffrez votre texte successivement avec plusieurs clés. Le déchiffrement nécessite les mêmes clés dans l'ordre exactement inverse.",
+    cascadeAddKeyAction: "Ajouter une clé",
+    cascadeRemoveKeyAria: "Retirer cette clé de la cascade",
+    cascadeOrderHint: "Déchiffrez en utilisant les clés dans l'ordre exactement inverse du chiffrement.",
+    cascadeMinKeys: "Au moins deux clés sont nécessaires pour le chiffrement en cascade.",
+    cascadeEncryptDone: "Chiffrement en cascade terminé.",
+    cascadeDecryptDone: "Déchiffrement en cascade terminé.",
+    cascadeDecryptFail: "Échec du déchiffrement en cascade. Vérifiez l'ordre et les valeurs des clés, ou le texte est peut-être corrompu."
 };

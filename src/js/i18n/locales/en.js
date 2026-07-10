@@ -90,5 +90,29 @@ export default {
   soundListening: "Listening…",
   soundMicPermission: "Microphone access is needed to listen for the sound sequence. Audio is processed entirely on this device and is never sent anywhere.",
   soundDecodeFail: "Couldn't decode the sound. Background noise or distance from the source may be interfering.",
-  soundCaveat: "This is a best-effort method — sensitive to ambient noise and microphone/speaker quality. It isn't a guaranteed transmission protocol."
+  soundCaveat: "This is a best-effort method — sensitive to ambient noise and microphone/speaker quality. It isn't a guaranteed transmission protocol.",
+
+  shamirSectionLabel: "Shared Key (Shamir)",
+    shamirIntro: "Split your key into multiple shares. A minimum number of shares is required to reconstruct it, so no single person can act alone.",
+    shamirThresholdLabel: "Shares required to reconstruct (threshold)",
+    shamirSharesLabel: "Total shares to generate",
+    shamirSplitAction: "Split Key",
+    shamirCombineAction: "Combine Shares",
+    shamirShareLabel: "Share {index}",
+    shamirShareCopyAria: "Copy this share",
+    shamirSplitDone: "Key split successfully. Distribute the shares securely.",
+    shamirCombineDone: "Key reconstructed successfully.",
+    shamirNeedMore: "At least {needed} shares are required to reconstruct this key.",
+    shamirCombineFail: "Combination failed. The shares are invalid or do not match.",
+    shamirCaveat: "If you lose more shares than the threshold allows, the key is permanently and irrecoverably lost. There is no way to recover it.",
+
+    cascadeSectionLabel: "Cascading Rotors",
+    cascadeIntro: "Encrypt your text successively with multiple keys. Decryption requires the same keys in exactly reverse order.",
+    cascadeAddKeyAction: "Add Key",
+    cascadeRemoveKeyAria: "Remove this key from the cascade",
+    cascadeOrderHint: "Decrypt using the keys in the exact reverse order of encryption.",
+    cascadeMinKeys: "At least two keys are required for cascade encryption.",
+    cascadeEncryptDone: "Cascade encryption complete.",
+    cascadeDecryptDone: "Cascade decryption complete.",
+    cascadeDecryptFail: "Cascade decryption failed. Check the key order and values, or the text may be corrupted."
 };

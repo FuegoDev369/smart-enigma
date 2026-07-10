@@ -90,5 +90,29 @@ export default {
   soundListening: "Ascolto in corso…",
   soundMicPermission: "È necessario l'accesso al microfono per ascoltare la sequenza sonora. L'audio viene elaborato interamente su questo dispositivo e non viene mai inviato altrove.",
   soundDecodeFail: "Impossibile decodificare il suono. Il rumore ambientale o la distanza dalla fonte potrebbero esserne la causa.",
-  soundCaveat: "Questo metodo funziona con il principio del \"best effort\": è sensibile al rumore ambientale e alla qualità di microfono/altoparlante e non è un protocollo di trasmissione garantito."
+  soundCaveat: "Questo metodo funziona con il principio del \"best effort\": è sensibile al rumore ambientale e alla qualità di microfono/altoparlante e non è un protocollo di trasmissione garantito.",
+
+  shamirSectionLabel: "Chiave condivisa (Shamir)",
+    shamirIntro: "Suddividi la tua chiave in più parti. Per ricostruirla è necessario un numero minimo di parti, così che nessuna persona possa agire da sola.",
+    shamirThresholdLabel: "Parti necessarie per la ricostruzione (soglia)",
+    shamirSharesLabel: "Numero totale di parti da generare",
+    shamirSplitAction: "Suddividi chiave",
+    shamirCombineAction: "Combina parti",
+    shamirShareLabel: "Parte {index}",
+    shamirShareCopyAria: "Copia questa parte",
+    shamirSplitDone: "Chiave suddivisa correttamente. Distribuisci le parti in modo sicuro.",
+    shamirCombineDone: "Chiave ricostruita correttamente.",
+    shamirNeedMore: "Sono necessarie almeno {needed} parti per ricostruire questa chiave.",
+    shamirCombineFail: "Combinazione non riuscita. Le parti non sono valide o non corrispondono tra loro.",
+    shamirCaveat: "Se perdi più parti di quelle consentite dalla soglia, la chiave viene persa in modo permanente e irrecuperabile. Non è possibile alcun recupero.",
+
+    cascadeSectionLabel: "Rotori a cascata",
+    cascadeIntro: "Cifra il tuo testo successivamente con più chiavi. La decifratura richiede le stesse chiavi nell'ordine esattamente inverso.",
+    cascadeAddKeyAction: "Aggiungi chiave",
+    cascadeRemoveKeyAria: "Rimuovi questa chiave dalla cascata",
+    cascadeOrderHint: "Decifra utilizzando le chiavi nell'ordine esattamente inverso rispetto alla cifratura.",
+    cascadeMinKeys: "Sono necessarie almeno due chiavi per la cifratura a cascata.",
+    cascadeEncryptDone: "Cifratura a cascata completata.",
+    cascadeDecryptDone: "Decifratura a cascata completata.",
+    cascadeDecryptFail: "Decifratura a cascata non riuscita. Controlla l'ordine e i valori delle chiavi, oppure il testo potrebbe essere danneggiato."
 };

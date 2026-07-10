@@ -19,7 +19,9 @@ import {
   fingerprintToggle, fingerprintValue, fingerprintToggleText,
   fingerprintToggleIcon, dropzone, fileInput, fileDropLabelText,
   fileClearBtn, fileEncryptBtn, fileDecryptBtn,
-  qrGenerateBtn, soundEmitBtn, soundListenBtn
+  qrGenerateBtn, soundEmitBtn, soundListenBtn,
+  shamirSplitBtn, shamirCombineBtn,
+  cascadeAddKeyBtn, cascadeEncryptBtn, cascadeDecryptBtn
 } from './dom.js';
 
 import { t, detectLang, translateUI } from './i18n/index.js';
@@ -32,6 +34,10 @@ import { encryptAction, decryptAction, clearAll } from './features/text-actions.
 import { handleFileSelected, setSelectedFile, fileEncryptAction, fileDecryptAction } from './features/file-actions.js';
 import { qrGenerateAction, wireCompressToggle } from './features/airgap-actions.js';
 import { panicWipe } from './features/panic-wipe.js';
+import { shamirSplitAction, shamirCombineAction } from './features/shamir-actions.js';
+import {
+  initCascadeKeyRows, addCascadeKeyRow, cascadeEncryptAction, cascadeDecryptAction
+} from './features/cascade-actions.js';
 
 // sound/sound-transfer.js (and, transitively, sound/fsk-codec.js) is
 // loaded lazily via dynamic import() on the first click of either sound
@@ -142,6 +148,13 @@ soundListenBtn.addEventListener('click', async () => {
   soundListenAction();
 });
 
+// Multi-party controls (Phase D, v6.0.0)
+shamirSplitBtn.addEventListener('click', () => shamirSplitAction());
+shamirCombineBtn.addEventListener('click', () => shamirCombineAction());
+cascadeAddKeyBtn.addEventListener('click', () => addCascadeKeyRow());
+cascadeEncryptBtn.addEventListener('click', () => cascadeEncryptAction());
+cascadeDecryptBtn.addEventListener('click', () => cascadeDecryptAction());
+
 toggleSecret.addEventListener('click', () => {
   const showing = keyInput.type === 'text';
   keyInput.type = showing ? 'password' : 'text';
@@ -185,6 +198,7 @@ window.addEventListener('beforeunload', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const initialLang = detectLang();
   langSelect.value = initialLang;
+  initCascadeKeyRows();
   // translateUI() is async (it lazily loads the detected language's
   // dictionary if it isn't 'en' — see src/js/i18n/index.js). Not
   // awaited here: the rest of initialization (updateWeakWarning,

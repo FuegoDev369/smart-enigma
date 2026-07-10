@@ -15,7 +15,9 @@ import { setSelectedFile } from './file-actions.js';
 import { state } from '../state.js';
 import {
   keyInput, inputArea, output, toggleSecretIcon, toggleSecret,
-  toast, fileInput, qrDisplay, compressionSavingsText
+  toast, fileInput, qrDisplay, compressionSavingsText,
+  shamirSharesOutput, shamirCombineTextarea,
+  cascadeKeysList, cascadeInputArea, cascadeOutput
 } from '../dom.js';
 
 /* -------- Panic wipe (v3.0.0) --------
@@ -55,6 +57,16 @@ export async function panicWipe() {
   if (state.qrDownloadBlobUrl) { URL.revokeObjectURL(state.qrDownloadBlobUrl); state.qrDownloadBlobUrl = null; }
   compressionSavingsText.hidden = true;
   state.lastCompressionSavings = null;
+
+  // Key shares (Shamir) and cascade keys are fragments/copies of the
+  // secret key itself — just as sensitive as keyInput, wipe them too.
+  shamirSharesOutput.innerHTML = '';
+  shamirSharesOutput.hidden = true;
+  shamirCombineTextarea.value = '';
+  cascadeKeysList.querySelectorAll('.cascade-key-input').forEach(el => { el.value = ''; });
+  cascadeInputArea.value = '';
+  cascadeOutput.textContent = t().outputPlaceholder;
+  cascadeOutput.classList.add('placeholder');
 
   try {
     if (navigator.clipboard && window.isSecureContext) {

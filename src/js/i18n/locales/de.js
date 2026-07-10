@@ -90,5 +90,29 @@ export default {
   soundListening: "Wird empfangen…",
   soundMicPermission: "Für den Empfang der Tonsequenz ist Mikrofonzugriff erforderlich. Die Audiodaten werden ausschließlich lokal auf diesem Gerät verarbeitet und nie weitergesendet.",
   soundDecodeFail: "Der Ton konnte nicht dekodiert werden. Umgebungsgeräusche oder ein zu großer Abstand zur Quelle können die Ursache sein.",
-  soundCaveat: "Diese Methode arbeitet nach dem Best-Effort-Prinzip — sie reagiert empfindlich auf Umgebungsgeräusche sowie Mikrofon- und Lautsprecherqualität und ist kein garantiertes Übertragungsprotokoll."
+  soundCaveat: "Diese Methode arbeitet nach dem Best-Effort-Prinzip — sie reagiert empfindlich auf Umgebungsgeräusche sowie Mikrofon- und Lautsprecherqualität und ist kein garantiertes Übertragungsprotokoll.",
+
+  shamirSectionLabel: "Geteilter Schlüssel (Shamir)",
+    shamirIntro: "Teilen Sie Ihren Schlüssel in mehrere Anteile auf. Zur Wiederherstellung ist eine Mindestanzahl an Anteilen erforderlich, sodass keine einzelne Person allein handeln kann.",
+    shamirThresholdLabel: "Für die Wiederherstellung erforderliche Anteile (Schwellenwert)",
+    shamirSharesLabel: "Gesamtzahl der zu erzeugenden Anteile",
+    shamirSplitAction: "Schlüssel aufteilen",
+    shamirCombineAction: "Anteile zusammenführen",
+    shamirShareLabel: "Anteil {index}",
+    shamirShareCopyAria: "Diesen Anteil kopieren",
+    shamirSplitDone: "Schlüssel erfolgreich aufgeteilt. Verteilen Sie die Anteile sicher.",
+    shamirCombineDone: "Schlüssel erfolgreich wiederhergestellt.",
+    shamirNeedMore: "Für die Wiederherstellung dieses Schlüssels sind mindestens {needed} Anteile erforderlich.",
+    shamirCombineFail: "Zusammenführung fehlgeschlagen. Die Anteile sind ungültig oder passen nicht zueinander.",
+    shamirCaveat: "Wenn Sie mehr Anteile verlieren, als der Schwellenwert zulässt, ist der Schlüssel unwiderruflich verloren. Eine Wiederherstellung ist dann nicht möglich.",
+
+    cascadeSectionLabel: "Kaskadierende Rotoren",
+    cascadeIntro: "Verschlüsseln Sie Ihren Text nacheinander mit mehreren Schlüsseln. Die Entschlüsselung erfordert dieselben Schlüssel in exakt umgekehrter Reihenfolge.",
+    cascadeAddKeyAction: "Schlüssel hinzufügen",
+    cascadeRemoveKeyAria: "Diesen Schlüssel aus der Kaskade entfernen",
+    cascadeOrderHint: "Entschlüsseln Sie, indem Sie die Schlüssel in exakt umgekehrter Reihenfolge der Verschlüsselung verwenden.",
+    cascadeMinKeys: "Für die Kaskadenverschlüsselung sind mindestens zwei Schlüssel erforderlich.",
+    cascadeEncryptDone: "Kaskadenverschlüsselung abgeschlossen.",
+    cascadeDecryptDone: "Kaskadenentschlüsselung abgeschlossen.",
+    cascadeDecryptFail: "Kaskadenentschlüsselung fehlgeschlagen. Überprüfen Sie Reihenfolge und Werte der Schlüssel, oder der Text ist beschädigt."
 };

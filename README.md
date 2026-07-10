@@ -6,7 +6,7 @@ A client-side, offline encryption tool with real AES-256-GCM, air-gap transfer (
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
-![Version](https://img.shields.io/badge/version-5.1.0-blue)
+![Version](https://img.shields.io/badge/version-6.0.0-blue)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 ![SMART-ENIGMA](https://img.shields.io/badge/SMART--ENIGMA-AABBCC?logo=github&logoColor=white)
 
@@ -24,6 +24,8 @@ A client-side, offline encryption tool with real AES-256-GCM, air-gap transfer (
 - 🗜️ **Optional LZSS compression** before encryption, with a homemade compressor (no library), falling back to raw storage when it wouldn't help
 - 📱 **Air-gap transfer** — turn any ciphertext into a scannable **QR code** or an audible **FSK sound signal**, so it can cross to another device without ever touching a network
 - 🧩 Optional legacy substitution cipher, clearly labeled as a demo (not secure) for educational comparison
+- 🔑 **Shared key (Shamir M-of-N)** — split your secret key into multiple shares so no single person can act alone; a minimum number of shares reconstructs it
+- 🔗 **Cascading rotors** — encrypt successively with multiple keys; decrypting requires the same keys in exactly reverse order
 - ♿ Accessible: keyboard navigation, `aria-live` regions, `prefers-reduced-motion` and `prefers-contrast` support
 - 📴 Fully offline-capable — no install, no account, no server required to use the app
 - 🗝️ Key is never stored or transmitted, and is wiped from memory when the tab closes
@@ -42,7 +44,7 @@ smart-enigma/
 ├── build.mjs                   # Dev server + production build (esbuild)
 ├── package.json
 ├── src/
-│   ├── css/                    # 18 partials, imported by main.css
+│   ├── css/                    # 19 partials, imported by main.css
 │   └── js/
 │       ├── main.js             # App entry point, event wiring
 │       ├── state.js            # Shared mutable app state
@@ -51,9 +53,11 @@ smart-enigma/
 │       ├── compression/         # Homemade LZSS compressor
 │       ├── qr/                  # Hand-written QR encoder + canvas renderer
 │       ├── sound/               # FSK modem (data-over-sound)
+│       ├── shamir/              # Shamir secret sharing over GF(256) — pure calc, no DOM
 │       ├── i18n/                # Translation orchestration + 9 locale files
 │       ├── ui/                  # Toast, theme, clipboard
-│       └── features/            # Text/file actions, key strength, fingerprint, panic wipe
+│       └── features/            # Text/file actions, key strength, fingerprint, panic wipe,
+│                                 # Shamir split/combine DOM wiring, cascading-rotor encryption
 └── tests/                       # node:test unit tests + manual regression checklist
 ```
 
@@ -105,6 +109,10 @@ Smart Enigma is a single-page app — there is no command line. Everything happe
 | Compress toggle | Runs LZSS compression on the file before encryption; shows the resulting savings |
 | Generate QR Code | Turns the current output into a scannable QR code for air-gap transfer |
 | Emit / Listen (sound) | Sends or receives the current output as an FSK audio signal between two devices |
+| Split Key (Shamir) | Splits the current secret key into N shares; a chosen threshold M is required to reconstruct it |
+| Combine Shares | Reconstructs the secret key from pasted shares and fills it back into the Secret Key field |
+| Add Key (cascade) | Adds another key row for sequential multi-key encryption |
+| Cascade Encrypt / Decrypt | Encrypts/decrypts the cascade message with every listed key in order; decrypting requires re-entering the keys in exact reverse order |
 
 ## Interactive flow example
 
@@ -149,6 +157,9 @@ Encrypting a file follows the same principle but produces a downloadable binary 
 | Wrong key on file decrypt | "Decryption failed" toast, no file produced |
 | Compression toggle off, or compression doesn't help | Payload stored raw, 0% savings shown |
 | Payload too long for a QR code | Clear error toast, no QR generated |
+| Fewer shares pasted than the embedded threshold | Toast telling exactly how many more shares are needed, combination not attempted |
+| Combined shares invalid or mismatched | \"Combination failed\" toast, key field left untouched |
+| Fewer than 2 keys in the cascade list | Toast warning, action cancelled |
 
 ## Development
 
